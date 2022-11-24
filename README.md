@@ -8,7 +8,7 @@ The goal for this assignment is to design a simple ETL process that converts a s
 ## 1. Context
 At Machina Labs we use a pair of robotic arms to form sheet metal into custom geometries designed in CAD software. This is done by defining a parametric path and slowly pushing the metal sheet into the desired shape one layer at a time. A demo video is given in this repo under `demo_video.mp4`
 
-While the robots are running we record large quantities of data in a time-series format tracking the position of the robot arms and the amount of force the arms experience using a sensor called a "load cell". An example of this data is given in the file `data/sample.csv` and is shown below:
+While the robots are running we record large quantities of data in a time-series format tracking the position of the robot arms and the amount of force the arms experience using a sensor called a "load cell". An example of this data is given in the file `data/sample.parquet` and is shown below:
 
 ```
 |-------|--------------------------|---------------------|-------|----------|----------------------|-------------|
@@ -39,7 +39,7 @@ Each entry (row) in the sample dataset gives the following features:
 
 
 ## 2. Instructions
-Design an ETL pipeline for processing the timeseries data given in `data/sample.csv`. Your pipeline should perform the following steps:
+Design an ETL pipeline for processing the timeseries data given in `data/sample.parquet`. Your pipeline should perform the following steps:
 
 1. Preprocess and Clean
 2. Convert timeseries to features by `robot_id`
@@ -51,7 +51,7 @@ All of these results should be saved in a format that is easy for others to acce
 
 ### 2.1 Preprocess and Clean
 
-Your first task in the ETL pipeline should be to extract/read data from `sample.csv` and pre-process/clean the data (e.g. handling NaN values, expected values, outliers). You should also consider methods for enforcing datatypes so that your pipeline doesn't break. Use your best judgement given what you understand about the type of data given what cleansing steps make sense.
+Your first task in the ETL pipeline should be to extract/read data from `sample.parquet` and pre-process/clean the data (e.g. handling NaN values, expected values, outliers). You should also consider methods for enforcing datatypes so that your pipeline doesn't break. Use your best judgement given what you understand about the type of data given what cleansing steps make sense.
 ### 2.2 Convert timeseries to features by `robot_id`
 #### Convert to features
 Timeseries is a convenient format for storing data but it's often not the most useful for interacting with, making plots, training ML models, etc. With your newly processed data, convert the timeseries data into a format that has the encoder values (x,y,z) and forces (fx,fy,fz) for each of the two robots (1,2) as individual columns. So rather than each row showing a time, sensor_type, robot_id, etc the data should show encoders (`x_1`, `y_1`, `z_1`, `x_2`, `y_2`, `z_2`) and forces (`fx_1`, `fy_1`, `fz_1`, `fx_2`, `fy_2`, `fz_2`) for every timestamp. 
