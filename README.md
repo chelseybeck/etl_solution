@@ -92,13 +92,13 @@ This data should also be saved in a way that these tables can be accessed by ref
 ### 2.3 Include Engineered/Calculated Features
 
 Recorded values are great but often times we want to calculate some other useful information. In the previous step you created a more convenient format for our encoder and force data. Take this information and generate some engineered features. You should include the follwing features:
-- 3 Velocity values (vx_1, vy_1, vz_1, vx_2, vy_2, vz_2)
-- 3 Acceleration values (ax_1, ay_1, az_1, ax_2, ay_2, az_2)
+- 6 Velocity values (vx_1, vy_1, vz_1, vx_2, vy_2, vz_2)
+- 6 Acceleration values (ax_1, ay_1, az_1, ax_2, ay_2, az_2)
 - Total Velocity (v1, v2)
 - Total Acceleration (a1, a2)
 - Total Force (f1, f2)
 
-You can add in any other features you think would be useful or informative from the original data. 
+Optional: You can add in any other features you think would be useful or informative from the original data. 
 
 ### 2.4 Calculate Runtime Statistics
 
@@ -108,15 +108,8 @@ Produce a dataset that provides useful statistics about the different `run_uuid`
 - run stop time
 - total runtime
 - total distance traveled 
-- minimum speed
-- maximum speed
-- average speed
-- minimum acceleration
-- maximum acceleration
-- average acceleration 
-- minimum total force
-- maximum total force
-- average total force 
+
+Optional: You can add in any other metrics you think would be useful or informative. 
 
 ### 2.5 Store and Provide Access Tools
 
