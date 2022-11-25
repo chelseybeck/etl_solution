@@ -1,7 +1,7 @@
 # Data Engineer Homework
 
 # Objective
-The goal for this assignment is to design a simple ETL process that converts a sample of raw timeseries data into a collection of useful datasets and statistics relevant for work we do at Machina Labs. You can use whatever tools you like but make sure to include instructions in your submission for how your submission should be used and what dependencies it has.
+The goal for this assignment is to design a simple ETL process that converts a sample of raw timeseries data into a collection of useful datasets and statistics relevant for work we do at Machina Labs. You can use whatever tools you like but make sure to include instructions in your submission for how your submission should be used and what dependencies it has. For example, if you choose to use python + pandas for data processing please include a `requirements.txt` file (in the case of pip) or `environment.yml` file (in the case of conda) as well as instructions for how we should run your solution code. 
 
 
 # ETL Example
@@ -54,7 +54,7 @@ All of these results should be saved in a format that is easy for others to acce
 Your first task in the ETL pipeline should be to extract/read data from `sample.parquet` and pre-process/clean the data (e.g. handling NaN values, expected values, outliers). You should also consider methods for enforcing datatypes so that your pipeline doesn't break. Use your best judgement given what you understand about the type of data given what cleansing steps make sense.
 ### 2.2 Convert timeseries to features by `robot_id`
 #### Convert to features
-Timeseries is a convenient format for storing data but it's often not the most useful for interacting with, making plots, training ML models, etc. With your newly processed data, convert the timeseries data into a format that has the encoder values (x,y,z) and forces (fx,fy,fz) for each of the two robots (1,2) as individual columns. So rather than each row showing a time, sensor_type, robot_id, etc the data should show encoders (`x_1`, `y_1`, `z_1`, `x_2`, `y_2`, `z_2`) and forces (`fx_1`, `fy_1`, `fz_1`, `fx_2`, `fy_2`, `fz_2`) for every timestamp. 
+Timeseries is a convenient format for storing data but it's often not the most useful for interacting with, making plots, training ML models, etc. With your newly processed data, convert the timeseries data into a format that has the encoder values (x,y,z) and forces (fx,fy,fz) for each of the two robots (1,2) as individual columns. So rather than each row showing a time, sensor_type, robot_id, etc the data should show measurements for robots 1 & 2 corresponding to each encoder (e.g. `x_1`, `y_1`, `z_1`, `x_2`, `y_2`, `z_2`) and forces (`fx_1`, `fy_1`, `fz_1`, `fx_2`, `fy_2`, `fz_2`) for every timestamp. 
 
 In the end, the header for your data should look like the following:
 
@@ -65,11 +65,11 @@ In the end, the header for your data should look like the following:
 ```
 
 #### Match timestamps with measurements
-If you manage to convert the timeseries data to individual features, you'll notice many gaps in the data (like in the table shown below). This is because our robots report data independently and the load cells report force data independently from the robot encoders. This means that every combination of robot and sensor has its own timestamp (4 combinations). However, we would like to be able to compare each of these features corresponding to a single timestamp. So you should transform the data to guarantee that any timestamp we access has a value for each column. 
+If you manage to convert the timeseries data to individual features, you'll notice many gaps in the data (like in the table shown below). This is because our robots report data independently and the load cells report force data independently from the robot encoders. This means that every combination of robot and sensor has its own timestamp (e.g. robot 1 encoder, robot 2 encoder, robot 1 load cell, robot 2 load cell). However, we would like to be able to compare each of these features corresponding to a single timestamp. So you should transform the data to guarantee that any timestamp we access has a value for each column. 
 
 It's up to you how you want to do this. You can match timestamps between features, interpolate values between timestamps or any other method you deem reasonable. Regardless which strategy you choose, explain why you chose it and what benefits or trade-offs it involves.
 
-This data should also be saved in a way that these tables can be accessed by reference to the `run_uuid`. The table below is an example of data for `run_uuid = 6176976534744076781`. 
+This data should also be saved in a way that these tables can be accessed by reference to the `run_uuid`. The table below is an example of data for `run_uuid = 6176976534744076781` with the "gaps" in the data you will need to transform. 
 
 ```
 |--------------------------|-------------|-------------|-------------|--------------|--------------|-------------|---------|----------|---------|---------|---------|-----|
@@ -91,14 +91,14 @@ This data should also be saved in a way that these tables can be accessed by ref
 
 ### 2.3 Include Engineered/Calculated Features
 
-Recorded values are great but often times we want to calculate some other useful information. In the previous step you created a more convenient format for our encoder and force data. Take this information and generate some engineered features. You should include the follwing features:
-- 6 Velocity values (vx_1, vy_1, vz_1, vx_2, vy_2, vz_2)
-- 6 Acceleration values (ax_1, ay_1, az_1, ax_2, ay_2, az_2)
-- Total Velocity (v1, v2)
-- Total Acceleration (a1, a2)
-- Total Force (f1, f2)
+Recorded values are great but often times we want to calculate some other useful information. In the previous step you created a more convenient format for our encoder and force data. Take this information and generate some engineered features. You should include the follwing features for both robots (1 & 2):
+- 6 Velocity values (`vx_1`, `vy_1`, `vz_1`, `vx_2`, `vy_2`, `vz_2`)
+- 6 Acceleration values (`ax_1`, `ay_1`, `az_1`, `ax_2`, `ay_2`, `az_2`)
+- Total Velocity (`v1`, `v2`)
+- Total Acceleration (`a1`, `a2`)
+- Total Force (`f1`, `f2`)
 
-Optional: You can add in any other features you think would be useful or informative from the original data. 
+You can add in any other features you think would be useful or informative from the original data. 
 
 ### 2.4 Calculate Runtime Statistics
 
@@ -108,8 +108,6 @@ Produce a dataset that provides useful statistics about the different `run_uuid`
 - run stop time
 - total runtime
 - total distance traveled 
-
-Optional: You can add in any other metrics you think would be useful or informative. 
 
 ### 2.5 Store and Provide Access Tools
 
