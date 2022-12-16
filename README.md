@@ -6,37 +6,39 @@ The goal for this assignment is to design a simple ETL process that converts a s
 
 # ETL Example
 ## 1. Context
-At Machina Labs we use a pair of robotic arms to form sheet metal into custom geometries designed in CAD software. This is done by defining a parametric path and slowly pushing the metal sheet into the desired shape one layer at a time. A demo video is given in this repo under `demo_video.mp4`
+At Machina Labs we use a pair of robotic arms to form sheet metal into custom geometries designed in CAD software. This is done by defining a parametric path and allowing the pair of robot arms to slowly pushing the metal sheet, layer by layer, into the desired shape. A demo video showing this process is given in this repository under `demo_video.mp4`
 
-While the robots are running we record large quantities of data in a time-series format tracking the position of the robot arms and the amount of force the arms experience using a sensor called a "load cell". An example of this data is given in the file `data/sample.parquet` and is shown below:
+While the robots are running we record large quantities of data in a time-series format tracking the position of the robot arms and the amount of force the arms experience using a sensor called a ``load cell``. An example of this data is given in the file `data/sample.parquet` and is shown below:
 
 ```
 |-------|--------------------------|---------------------|-------|----------|----------------------|-------------|
-|       | time                     | value               | field | robot_id | run_uuid             | sensor_type |
-|-------|--------------------------|---------------------|-------|----------|----------------------|-------------|
-|     0 | 2022-11-23T20:40:00.444Z |            826.1516 | x     |        1 |  8910095844186657261 | encoder     |
-|-------|--------------------------|---------------------|-------|----------|----------------------|-------------|
-|     1 | 2022-11-23T20:40:02.111Z |            882.4617 | x     |        1 |  8910095844186657261 | encoder     |
-|-------|--------------------------|---------------------|-------|----------|----------------------|-------------|
-|     2 | 2022-11-23T20:40:03.778Z |            846.7317 | x     |        1 |  8910095844186657261 | encoder     |
-|-------|--------------------------|---------------------|-------|----------|----------------------|-------------|
+|         | time                       | value                 | field   | robot_id   | run_uuid               | sensor_type   |
+| ------- | -------------------------- | --------------------- | ------- | ---------- | ---------------------- | ------------- |
+| 0       | 2022-11-23T20:40:00.444Z   | 826.1516              | x       | 1          | 8910095844186657261    | encoder       |
+| ------- | -------------------------- | --------------------- | ------- | ---------- | ---------------------- | ------------- |
+| 1       | 2022-11-23T20:40:02.111Z   | 882.4617              | x       | 1          | 8910095844186657261    | encoder       |
+| ------- | -------------------------- | --------------------- | ------- | ---------- | ---------------------- | ------------- |
+| 2       | 2022-11-23T20:40:03.778Z   | 846.7317              | x       | 1          | 8910095844186657261    | encoder       |
+| ------- | -------------------------- | --------------------- | ------- | ---------- | ---------------------- | ------------- |
 
 |-------|--------------------------|---------------------|-------|----------|----------------------|-------------|
-|  8664 | 2022-11-23T20:40:00.444Z |  -1132.949052734375 | fx    |        1 |  7582293080991470061 | load_cell   |
-|-------|--------------------------|---------------------|-------|----------|----------------------|-------------|
-|  8665 | 2022-11-23T20:40:02.111Z |  -906.7292041015623 | fx    |        1 |  7582293080991470061 | load_cell   |
-|-------|--------------------------|---------------------|-------|----------|----------------------|-------------|
-|  8666 | 2022-11-23T20:40:03.778Z | -307.31151000976564 | fx    |        1 |  7582293080991470061 | load_cell   |
-|-------|--------------------------|---------------------|-------|----------|----------------------|-------------|
+| 8664    | 2022-11-23T20:40:00.444Z   | -1132.949052734375    | fx      | 1          | 7582293080991470061    | load_cell     |
+| ------- | -------------------------- | --------------------- | ------- | ---------- | ---------------------- | ------------- |
+| 8665    | 2022-11-23T20:40:02.111Z   | -906.7292041015623    | fx      | 1          | 7582293080991470061    | load_cell     |
+| ------- | -------------------------- | --------------------- | ------- | ---------- | ---------------------- | ------------- |
+| 8666    | 2022-11-23T20:40:03.778Z   | -307.31151000976564   | fx      | 1          | 7582293080991470061    | load_cell     |
+| ------- | -------------------------- | --------------------- | ------- | ---------- | ---------------------- | ------------- |
 ```
+
 Each entry (row) in the sample dataset gives the following features:
 - `time`: The time the measurement was taken.
 - `value`: The measured value corresponding to the sensor taking the reading.
-- `field`: The field for the measured value. For encoders this is usually the (x,y,z) coordinate. For the `load_cell` (i.e. force measuring device) this is generally the (fx,fy,fz) coordinate.
+- `field`: The field for the measured value. For encoders this indicates which cartesian coordinate the measurement is taken in (e.g. [`x`,`y`,`z`]) and for the `load_cell` (i.e. force measuring device) this gives the direction of the force vector in cartesian coordinates (e.g. [`fx`,`fy`,`fz`]).
 - `robot_id`: The ID number for the robot being used (i.e. there are 2 robots so the `robot_id` is either `1` or `2`).
 - `run_uuid`: A random ID number assigned to the part being formed.
 - `sensor_type`: The type of sensor reporting data (e.g. encoder = robot position / load_cell = force measurements)
 
+Note: The encoder gives all values in millimeters and the load cell gives all values in Newtons.
 
 ## 2. Instructions
 Design an ETL pipeline for processing the timeseries data given in `data/sample.parquet`. Your pipeline should perform the following steps:
@@ -47,46 +49,50 @@ Design an ETL pipeline for processing the timeseries data given in `data/sample.
 4. Calculate Runtime Statistics
 5. Store and Provide Access Tools
 
-All of these results should be saved in a format that is easy for others to access. It's up to you how you want to store things. You can use simple CSV files, a SQL database, etc. Regardless what you choose, the structure should be simple enough that we could read your results in a meaningful way.
+All of these results should be saved in a format that is easy for others to access. It's up to you how you want to store things. You can use simple CSV files, a SQL database, etc. Regardless what you choose, make sure the structure is simple enough that any stakeholder wanting to use your data could easily read it back using the tools and methods you provide. 
 
 ### 2.1 Preprocess and Clean
 
-Your first task in the ETL pipeline should be to extract/read data from `sample.parquet` and pre-process/clean the data (e.g. handling NaN values, expected values, outliers). You should also consider methods for enforcing datatypes so that your pipeline doesn't break. Use your best judgement given what you understand about the type of data given what cleansing steps make sense.
+Your first task in the ETL pipeline should be to extract/read data from `sample.parquet` and pre-process/clean the data (e.g. handling NaN values, expected values, outliers). You should also consider methods for enforcing datatypes, filling missing data, etc so that your pipeline doesn't break. If one of the sensors was missing some data, would your pipeline fail? Does your pipeline assume a certain structure for the data? How does it accomodate changes or mistakes down stream from where your ETL pipeline runs? Use your best judgement given what you understand about the type of data given what cleansing steps make sense.
 ### 2.2 Convert timeseries to features by `robot_id`
 #### Convert to features
-Timeseries is a convenient format for storing data but it's often not the most useful for interacting with, making plots, training ML models, etc. With your newly processed data, convert the timeseries data into a format that has the encoder values (x,y,z) and forces (fx,fy,fz) for each of the two robots (1,2) as individual columns. So rather than each row showing a time, sensor_type, robot_id, etc the data should show measurements for robots 1 & 2 corresponding to each encoder (e.g. `x_1`, `y_1`, `z_1`, `x_2`, `y_2`, `z_2`) and forces (`fx_1`, `fy_1`, `fz_1`, `fx_2`, `fy_2`, `fz_2`) for every timestamp. 
+Timeseries is a convenient format for storing data but it's often not the most useful for interacting with, making plots, training ML models, etc. With your newly processed data, convert the timeseries data into a format that has the encoder values (`x`,`y`,`z`) and forces (`fx`,`fy`,`fz`) for each of the two robots (1,2) as individual columns. So rather than each row showing a time, sensor_type, robot_id, etc the data should show measurements for robots 1 & 2 corresponding to each encoder (e.g. `x_1`, `y_1`, `z_1`, `x_2`, `y_2`, `z_2`) and forces (`fx_1`, `fy_1`, `fz_1`, `fx_2`, `fy_2`, `fz_2`) for every timestamp. 
 
 In the end, the header for your data should look like the following:
 
 ```
 |--------------------------|-------------|-------------|-------------|--------------|--------------|-------------|---------|----------|---------|---------|---------|-----|
-| time                     | fx_1        | fx_2        | fy_1        | fy_2         | fz_1         | fz_2        | x_1     | x_2      | y_1     | y_2     | z_1     | z_2 |
-|--------------------------|-------------|-------------|-------------|--------------|--------------|-------------|---------|----------|---------|---------|---------|-----|
+| time | fx_1 | fx_2 | fy_1 | fy_2 | fz_1 | fz_2 | x_1 | x_2 | y_1 | y_2 | z_1 | z_2 |
+| ---- | ---- | ---- | ---- | ---- | ---- | ---- | --- | --- | --- | --- | --- | --- |
 ```
 
 #### Match timestamps with measurements
-If you manage to convert the timeseries data to individual features, you'll notice many gaps in the data (like in the table shown below). This is because our robots report data independently and the load cells report force data independently from the robot encoders. This means that every combination of robot and sensor has its own timestamp (e.g. robot 1 encoder, robot 2 encoder, robot 1 load cell, robot 2 load cell). However, we would like to be able to compare each of these features corresponding to a single timestamp. So you should transform the data to guarantee that any timestamp we access has a value for each column. 
+After converting the timeseries data to individual features, you'll notice many gaps in the data (like in the table shown below). This happens because encoder and load cell sensors run independently and their time stamps are not in sync with one another. Additionally, because we have two separate robots (each with their own encoder and load cell sensors) you end up with 4 separate sets of measurements with their own unique timestamps. 
+1. Robot 1 encoder measurements
+2. Robot 1 load cell measurements
+3. Robot 2 encoder measurements
+4. Robot 2 load cell measurements
 
-It's up to you how you want to do this. You can match timestamps between features, interpolate values between timestamps or any other method you deem reasonable. Regardless which strategy you choose, explain why you chose it and what benefits or trade-offs it involves.
+However, we would like to be able to compare each of these features corresponding to a single timestamp. So in this step of the ETL, you should transform the data to guarantee that any timestamp we access has a value for each column. It's up to you how you want to do this. You can match timestamps between features, interpolate values between timestamps or any other method you deem reasonable. Regardless which strategy you choose, explain why you chose it and what benefits or trade-offs it involves.
 
 This data should also be saved in a way that these tables can be accessed by reference to the `run_uuid`. The table below is an example of data for `run_uuid = 6176976534744076781` with the "gaps" in the data you will need to transform. 
 
 ```
 |--------------------------|-------------|-------------|-------------|--------------|--------------|-------------|---------|----------|---------|---------|---------|-----|
-| time                     | fx_1        | fx_2        | fy_1        | fy_2         | fz_1         | fz_2        | x_1     | x_2      | y_1     | y_2     | z_1     | z_2 |
-|--------------------------|-------------|-------------|-------------|--------------|--------------|-------------|---------|----------|---------|---------|---------|-----|
-| 2022-11-23T20:40:00.007Z | 176.0963814 |             | 174.2686233 |              | -258.1794165 |             |         |          |         |         |         |     |
-|--------------------------|-------------|-------------|-------------|--------------|--------------|-------------|---------|----------|---------|---------|---------|-----|
-| 2022-11-23T20:40:00.008Z |             |             |             |              |              |             |         | 1438.412 |         | 939.383 |         |     |
-|--------------------------|-------------|-------------|-------------|--------------|--------------|-------------|---------|----------|---------|---------|---------|-----|
-| 2022-11-23T20:40:00.011Z |             |             |             |              |              |             | 1440.79 |          | 936.925 |         | -222.29 |     |
-|--------------------------|-------------|-------------|-------------|--------------|--------------|-------------|---------|----------|---------|---------|---------|-----|
-| 2022-11-23T20:40:00.017Z | 178.4532845 |             |  172.338417 |              | -259.4669531 |             |         |          |         |         |         |     |
-|--------------------------|-------------|-------------|-------------|--------------|--------------|-------------|---------|----------|---------|---------|---------|-----|
-| 2022-11-23T20:40:00.01Z  |             | 50.37302734 |             | -416.0604053 |              | 80.69138062 |         |          |         |         |         |     |
-|--------------------------|-------------|-------------|-------------|--------------|--------------|-------------|---------|----------|---------|---------|---------|-----|
-| 2022-11-23T20:40:00.023Z |             |             |             |              |              |             | 1440.79 |          | 936.925 |         | -222.29 |     |
-|--------------------------|-------------|-------------|-------------|--------------|--------------|-------------|---------|----------|---------|---------|---------|-----|
+| time                       | fx_1          | fx_2          | fy_1          | fy_2           | fz_1           | fz_2          | x_1       | x_2        | y_1       | y_2       | z_1       | z_2   |
+| -------------------------- | ------------- | ------------- | ------------- | -------------- | -------------- | ------------- | --------- | ---------- | --------- | --------- | --------- | ----- |
+| 2022-11-23T20:40:00.007Z   | 176.0963814   |               | 174.2686233   |                | -258.1794165   |               |           |            |           |           |           |       |
+| -------------------------- | ------------- | ------------- | ------------- | -------------- | -------------- | ------------- | --------- | ---------- | --------- | --------- | --------- | ----- |
+| 2022-11-23T20:40:00.008Z   |               |               |               |                |                |               |           | 1438.412   |           | 939.383   |           |       |
+| -------------------------- | ------------- | ------------- | ------------- | -------------- | -------------- | ------------- | --------- | ---------- | --------- | --------- | --------- | ----- |
+| 2022-11-23T20:40:00.011Z   |               |               |               |                |                |               | 1440.79   |            | 936.925   |           | -222.29   |       |
+| -------------------------- | ------------- | ------------- | ------------- | -------------- | -------------- | ------------- | --------- | ---------- | --------- | --------- | --------- | ----- |
+| 2022-11-23T20:40:00.017Z   | 178.4532845   |               | 172.338417    |                | -259.4669531   |               |           |            |           |           |           |       |
+| -------------------------- | ------------- | ------------- | ------------- | -------------- | -------------- | ------------- | --------- | ---------- | --------- | --------- | --------- | ----- |
+| 2022-11-23T20:40:00.01Z    |               | 50.37302734   |               | -416.0604053   |                | 80.69138062   |           |            |           |           |           |       |
+| -------------------------- | ------------- | ------------- | ------------- | -------------- | -------------- | ------------- | --------- | ---------- | --------- | --------- | --------- | ----- |
+| 2022-11-23T20:40:00.023Z   |               |               |               |                |                |               | 1440.79   |            | 936.925   |           | -222.29   |       |
+| -------------------------- | ------------- | ------------- | ------------- | -------------- | -------------- | ------------- | --------- | ---------- | --------- | --------- | --------- | ----- |
 ```
 
 ### 2.3 Include Engineered/Calculated Features
@@ -97,8 +103,6 @@ Recorded values are great but often times we want to calculate some other useful
 - Total Velocity (`v1`, `v2`)
 - Total Acceleration (`a1`, `a2`)
 - Total Force (`f1`, `f2`)
-
-You can add in any other features you think would be useful or informative from the original data. 
 
 ### 2.4 Calculate Runtime Statistics
 
