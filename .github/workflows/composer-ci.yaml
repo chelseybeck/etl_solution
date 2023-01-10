@@ -1,12 +1,11 @@
 name: 'Composer CI'
 
 on:
-  push:
+  pull_request:
     branches:
     - main
     paths:
     - 'sensor_data_etl/**'
-  pull_request:
 
 jobs:
   sync_bucket:
