@@ -2,7 +2,6 @@
 This is an example pipeline built as a solution to an assignment provided by [Machina Labs](https://github.com/Machina-Labs/data_engineer_hw). It extracts robot sensor data from a Google Cloud Storage (GCS) bucket, runs tasks in Airflow to transform the data based on a set of specifications, and loads it into a BigQuery data lake for downstream consumption.
 
 # Tech Stack
-
 - Google Cloud Platform (GCP)
 - Apache Airflow - workflow as code - written in Python
   - Running on a GCP hosted Composer cluster
@@ -25,6 +24,7 @@ Code deployments are separated into two main environment branches, dev and main.
   - it syncs with DAG bucket in GCP that houses Airflow DAGs
 
 # ETL Data Flow Narrative
+DONE
 1. Extract parquet file from GCS bucket and import into a BigQuery table in the raw layer dataset (raw_sensor_data_prod)
 2. Clean raw data
     - Deduplicate & trim
@@ -35,6 +35,7 @@ Code deployments are separated into two main environment branches, dev and main.
     - create hash codes (primary key) to tie back to raw layer
       - identifies each row w/ a unique key
       - helps in preventing appending duplicate data
+IN PROGRESS
 5. Match timestamps with measurements
 6. Calculated Features
    - 6 Velocity values (vx_1, vy_1, vz_1, vx_2, vy_2, vz_2)
@@ -59,17 +60,17 @@ Add a task to the [trns_sensor_data.py](sensor_data_etl/trns_sensor_data.py) wor
       name_of_task = BigQueryOperator(
         task_id="name_of_task",
         sql = 'sql/name_of_task.sql',
-        params={"clean_table_location":f'{project_id}.{etl_dataset}.w_sensor_data_clean'},
+        params={"clean_table_location": "project_id.dataset_name.table_name"},
         destination_dataset_table = f'{project_id}.{etl_dataset}.w_features_converted',
         create_disposition = "CREATE_IF_NEEDED",
         write_disposition = "WRITE_TRUNCATE",
         use_legacy_sql=False 
     )
 
-The above example task will create a new table in BigQuery based on whatever SQL logic is in the .sql file referenced. Params are additional parameters you can pass to the SQL file. The destination dataset table should be updated with the full table location. Airflow is flexible and extendible - check out their [library of operators](https://airflow.apache.org/docs/apache-airflow/stable/concepts/operators.html).
-
+The above example task will create a new table in BigQuery based on whatever SQL logic is in the .sql file referenced. Params are additional parameters you can pass to the SQL file. The destination dataset table should be updated with the full table location. Airflow is flexible and extendible - check out their [library of operators](https://airflow.apache.org/docs/apache-airflow/stable/concepts/operators.html) for a better idea of what all tasks can be added.
 ## Updating Transformation Logic
 To update the transformation logic (add features, etc.), update the SQL file corresponding to the task.
 # Access
 
-# Future Improvements / Enhancements
+# Future Improvements / Enhancements (In Progress)
+- Automate the CI pipeline so that when a parquet file is added to the data directory in the repo, it triggers the workflow in GCP and then returns a transformed file to the same directory (using cloud functions)
