@@ -1,4 +1,14 @@
-.python-version
-solution.ipynb
-data/raw.csv
-.ipynb_checkpoints
+Terraform.gitignore	
+#  Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# .locked tfstate files
+*.lock.*
+
+# Ignore any .tfvars files that are generated automatically for each Terraform run. Most
+# .tfvars files are managed as part of configuration and so should be included in
+# version control.
