@@ -47,7 +47,7 @@ schedule_interval=schedule_interval) as dag:
         write_disposition = "WRITE_TRUNCATE",
         use_legacy_sql=False 
     )
-    clean_data.set_upstream(extract_parquet_file)
+    clean_data.set_upstream(start_task)
 
     # Convert timeseries to features by robot_id
     convert_to_features = BigQueryOperator(
