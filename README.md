@@ -1,12 +1,12 @@
 # Overview | Sensor Data ETL Pipeline
-This is an example pipeline built as a solution to an assignment provided by [Machina Labs](https://github.com/Machina-Labs/data_engineer_hw). It extracts robot sensor data, transforms it based on a set of specifications, and loads it into a data warehouse for downstream consumption.
+This is an example pipeline built as a solution to an assignment provided by [Machina Labs](https://github.com/Machina-Labs/data_engineer_hw). It extracts robot sensor data from a Google Cloud Storage (GCS) bucket, runs tasks in Airflow to transform the data based on a set of specifications, and loads it into a BigQuery data lake for downstream consumption.
 
 # Tech Stack
 
 - Google Cloud Platform (GCP)
 - Apache Airflow - workflow as code - written in Python
   - Running on a GCP hosted Composer cluster
-- BigQuery - Data warehouse
+- BigQuery - Data lake
   - Transformation logic written in standard SQL
 
 ### Why these tools?  
@@ -16,8 +16,6 @@ This is an example pipeline built as a solution to an assignment provided by [Ma
 # Project Structure 
 
 # Continuous Integration / Development (CI/CD)
-There are two separate environments, staging and main. Main is a protected branch and all code should be fully tested before merging dev to main. Changes  sends code to the cloud in a simulated production environment.  
-
 ## Environments
 Code deployments are separated into two main environment branches, dev and main. Code deployed to the dev branch allows for testing before pushing changes to the cloud. Merging changes to main will push them to the cloud.
 
@@ -53,9 +51,25 @@ Code deployments are separated into two main environment branches, dev and main.
 8. Perform data quality (DQ) checks
 9. Load final table into transformed layer of data warehouse for downstream consumption
 
-# Access
 # Contributing
+To contribute, clone this repo and create a feature branch from main. Push changes to dev and open a PR to main.
 ## Adding tasks to the DAG
+Add a task to the [trns_sensor_data.py](sensor_data_etl/trns_sensor_data.py) workflow. Example task:
+
+      name_of_task = BigQueryOperator(
+        task_id="name_of_task",
+        sql = 'sql/name_of_task.sql',
+        params={"clean_table_location":f'{project_id}.{etl_dataset}.w_sensor_data_clean'},
+        destination_dataset_table = f'{project_id}.{etl_dataset}.w_features_converted',
+        create_disposition = "CREATE_IF_NEEDED",
+        write_disposition = "WRITE_TRUNCATE",
+        use_legacy_sql=False 
+    )
+
+The above example task will create a new table in BigQuery based on whatever SQL logic is in the .sql file referenced. Params are additional parameters you can pass to the SQL file. The destination dataset table should be updated with the full table location. Airflow is flexible and extendible - check out their [library of operators](https://airflow.apache.org/docs/apache-airflow/stable/concepts/operators.html).
+
 ## Updating Transformation Logic
+To update the transformation logic (add features, etc.), update the SQL file corresponding to the task.
+# Access
 
 # Future Improvements / Enhancements
