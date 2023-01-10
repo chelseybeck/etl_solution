@@ -79,7 +79,7 @@ Add a task to the [trns_sensor_data.py](sensor_data_etl/trns_sensor_data.py) wor
         task_id="name_of_task",
         sql = 'sql/name_of_task.sql',
         params={"clean_table_location": "project_id.dataset_name.table_name"},
-        destination_dataset_table = f'{project_id}.{etl_dataset}.w_features_converted',
+        destination_dataset_table = "project_id.dataset_name.table_name",
         create_disposition = "CREATE_IF_NEEDED",
         write_disposition = "WRITE_TRUNCATE",
         use_legacy_sql=False 
@@ -88,8 +88,10 @@ Add a task to the [trns_sensor_data.py](sensor_data_etl/trns_sensor_data.py) wor
 The above example task will create a new table in BigQuery based on whatever SQL logic is in the .sql file referenced. Params are additional parameters you can pass to the SQL file. The destination dataset table should be updated with the full table location. Airflow is flexible and extendible - check out their [library of operators](https://airflow.apache.org/docs/apache-airflow/stable/concepts/operators.html) for a better idea of what all tasks can be added.
 ## Updating Transformation Logic
 To update the transformation logic (add features, etc.), update the SQL file corresponding to the task.
+
 # Access
+
 
 # Future Improvements / Enhancements (In Progress)
 - Automate the CI pipeline so that when a parquet file is added to the data directory in the repo, it triggers the workflow in GCP, runs transformation, then returns a transformed file to the bucket (using cloud functions). Transformed file can then be downloaded (via GH Action) by the user.
-- Add Airflow error handling to provide specificity in logs
+- Add Airflow exception operator to provide specificity in logs
