@@ -1,11 +1,11 @@
-name: 'Composer CI'
+name: 'Trigger Transformation CI'
 
 on:
   pull_request:
     branches:
     - main
     paths:
-    - 'sensor_data_etl/**'
+    - 'sensor_data_files/out/**.parquet'
 
 jobs:
   sync_bucket:
@@ -30,4 +30,4 @@ jobs:
       uses: 'google-github-actions/setup-gcloud@v1'
 
     - name: 'Use gcloud CLI'
-      run: 'gsutil rsync -r -d sensor_data_etl gs://us-central1-sensor-data-pro-af7d6e53-bucket/dags/sensor_data_etl'
+      run: 'gsutil rsync -r -d sensor_data_files/out gs://sensor_data_files/in'
