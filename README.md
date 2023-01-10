@@ -15,7 +15,7 @@ The ultimate goal is for the process to be almost entirely automated. A user wil
   - Transformation logic written in standard SQL
 
 ### Why these tools?  
-- These are tools that I work with every day and am most familiar with. I have a GCP instance set up as a playground and was able to leverage those resources to automate this solution in the cloud.
+- These are tools that I work with every day and am most familiar with. I wanted to build an automated solution using cloud resources to highlight my strongest skillsets.
 - All are great choices for running ETL pipelines and were well-suited to this type of structured data.
 
 # Project Structure 
@@ -28,8 +28,9 @@ The ultimate goal is for the process to be almost entirely automated. A user wil
   - [trns_sensor_data.py](./sensor_data_etl/trns_sensor_data.py) - defines set of tasks in Python
 - [sensor_data_files](./sensor_data_files) - contains raw and transformed files
   - adding a .parquet file matching the schema in the [raw sensor data dictionary](./data_dictionaries/raw_sensor_data_dictionary.csv) to this directory will trigger the transformation process. Once the transformation is complete, a GitHub Action can be run to download the transformed file in CSV format (in progress). Note: if the schema doesn't match the target structure, the workflow will fail on the first task.
+- [terraform](./terraform) - contains terraform modules that create the cloud infrastructure - this is a replica of a setup in a private repo and is not connected to an action
 - [.gitignore](./.gitignore) - designates files to exclude when commiting to Git
-- [instructions.md](./instructions.md) - contains instructions for this assignment.
+- [instructions.md](./instructions.md) - contains instructions for this assignment
 - [demo_video.mp4](./demo_video.mp4) - provided to give context to robot actions
 - [README.md](README.MD) - project documentation (this file)
 
@@ -90,7 +91,9 @@ The above example task will create a new table in BigQuery based on whatever SQL
 To update the transformation logic (add features, etc.), update the SQL file corresponding to the task.
 
 # Access
+As soon as this solution is complete and fully tested, I can provide access to anyone at Machina Labs who wishes to upload a file, trigger the process, and retrieve the results. 
 
+A sample of the transformed features (prior to matching timestamps) can be found [here](https://datastudio.google.com/reporting/0b0d4ef7-3b85-49f8-8f77-89d28a475c9d) and I will update with links to view the final tables once the final transformation tasks are added. 
 
 # Future Improvements / Enhancements (In Progress)
 - Automate the CI pipeline so that when a parquet file is added to the data directory in the repo, it triggers the workflow in GCP, runs transformation, then returns a transformed file to the bucket (using cloud functions). Transformed file can then be downloaded (via GH Action) by the user.
