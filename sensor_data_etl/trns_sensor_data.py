@@ -36,19 +36,7 @@ with DAG(dag_name, catchup=False, default_args=default_dag_args,
 schedule_interval=schedule_interval) as dag:
     start_task = DummyOperator(task_id='start')
 
-    # Run tasks:
-    # 1. Ingest .parquet file from GCS to BigQuery
-    extract_parquet_file = BigQueryOperator(
-        task_id = "gcs_to_bq_sensor_data",
-        sql = "sql/extract_parquet_file.sql"
-    )
-    extract_parquet_file.set_upstream(start_task)
-
-    # 2. Check current records
-    # check to see ensure that this data has not already been transformed 
-    # (does not match a record hash code in the transformed table.)
-
-    # 3. Run transformation to clean data.
+    # Run transformation to clean data.
     # deduplicate, cast datatypes, and trim
     clean_data = BigQueryOperator(
         task_id="clean_data",
@@ -61,7 +49,7 @@ schedule_interval=schedule_interval) as dag:
     )
     clean_data.set_upstream(extract_parquet_file)
 
-    # 4. Convert timeseries to features by robot_id
+    # Convert timeseries to features by robot_id
     convert_to_features = BigQueryOperator(
         task_id="convert_to_features",
         sql = 'sql/convert_to_features.sql',
@@ -73,19 +61,20 @@ schedule_interval=schedule_interval) as dag:
     )
     convert_to_features.set_upstream(clean_data)
 
-    # 5. Match timestamps with measurements - TO DO
+    # Using dummy operators for tasks not yet written
+    # Match timestamps with measurements - TO DO
     match_timestamps = DummyOperator(task_id='match_timestamps')
     match_timestamps.set_upstream(convert_to_features)
 
-    # 6. Add engineered/calculated features - TO DO
+    # Add engineered/calculated features - TO DO
     add_calculated_features = DummyOperator(task_id='add_calculated_features')
     add_calculated_features.set_upstream(match_timestamps)
 
-    # 7. Calculate Runtime Statistics - TO DO
+    # Calculate Runtime Statistics - TO DO
     calculate_runtime_stats = DummyOperator(task_id='calculate_runtime_stats')
     calculate_runtime_stats.set_upstream(match_timestamps)
 
-    # 8. Load final table
+    # Load final table
     # load_final_table = BigQueryOperator(
     #     task_id="load_final_table",
     #     sql = 'sql/load_final_table.sql',
@@ -95,7 +84,7 @@ schedule_interval=schedule_interval) as dag:
     #     use_legacy_sql=False 
     # )
 
-    # 9. Export table as csv to bucket
+    # Export table as csv to bucket
     # create GH action to download the file back to GH repo
 
     end_task = DummyOperator(task_id='end')
