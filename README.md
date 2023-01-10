@@ -38,34 +38,31 @@ Code deployments are separated into two main environment branches, dev and main.
   - it syncs with DAG bucket in GCP that houses Airflow DAGs
 
 # ETL Data Flow Narrative
-DONE
-1. Extract parquet file from GCS bucket and import into a BigQuery table in the raw layer dataset (raw_sensor_data_prod)
-2. Clean raw data
+1. Extract parquet file from GCS bucket and import into a BigQuery table in the raw layer dataset (raw_sensor_data_prod) - DONE
+2. Clean raw data - DONE
     - Deduplicate & trim
       - cast all columns to correct datatype based on the raw sensor data dictionary
       - Note: descriptive numbers are converted to strings in accordance with best practices
-3. Convert Features
+3. Convert Features - DONE
     - convert timeseries to features by robot_id
     - create hash codes (primary key) to tie back to raw layer
       - identifies each row w/ a unique key
       - helps in preventing appending duplicate data
-
-IN PROGRESS
-4. Match timestamps with measurements
-5. Calculated Features
+4. Match timestamps with measurements - IN PROGRESS
+5. Calculated Features - TO DO 
    - 6 Velocity values (vx_1, vy_1, vz_1, vx_2, vy_2, vz_2)
    - 6 Acceleration values (ax_1, ay_1, az_1, ax_2, ay_2, az_2)
    - Total Velocity (v1, v2)
    - Total Acceleration (a1, a2)
    - Total Force (f1, f2)
-6. Runtime Statistics
+6. Runtime Statistics - TO DO
    - run_uuid
    - run start time
    - run stop time
    - total runtime
    - total distance draveled
-7. Perform data quality (DQ) checks
-8. Load final table into transformed layer of data warehouse for downstream consumption
+7. Perform data quality (DQ) checks - TO DO
+8. Load final table into transformed layer of data warehouse for downstream consumption - TO DO
 
 ![Airflow DAG](./img/airflow_dag.png)
 # Contributing
