@@ -38,10 +38,11 @@ schedule_interval=schedule_interval) as dag:
 
     # Run tasks:
     # 1. Ingest .parquet file from GCS to BigQuery
-    # extract_parquet_file = BigQueryOperator(
-    #     task_id = "gcs_to_bq_sensor_data",
-    #     sql = "sql/extract_parquet_file.sql"
-    # )
+    extract_parquet_file = BigQueryOperator(
+        task_id = "gcs_to_bq_sensor_data",
+        sql = "sql/extract_parquet_file.sql"
+    )
+    extract_parquet_file.set_upstream(start_task)
 
     # 2. Check current records
     # check to see ensure that this data has not already been transformed 
@@ -58,6 +59,7 @@ schedule_interval=schedule_interval) as dag:
         write_disposition = "WRITE_TRUNCATE",
         use_legacy_sql=False 
     )
+    clean_data.set_upstream(extract_parquet_file)
 
     # 4. Convert timeseries to features by robot_id
     convert_to_features = BigQueryOperator(
@@ -69,15 +71,19 @@ schedule_interval=schedule_interval) as dag:
         write_disposition = "WRITE_TRUNCATE",
         use_legacy_sql=False 
     )
+    convert_to_features.set_upstream(clean_data)
 
     # 5. Match timestamps with measurements - TO DO
     match_timestamps = DummyOperator(task_id='match_timestamps')
+    match_timestamps.set_upstream(convert_to_features)
 
     # 6. Add engineered/calculated features - TO DO
     add_calculated_features = DummyOperator(task_id='add_calculated_features')
+    add_calculated_features.set_upstream(match_timestamps)
 
     # 7. Calculate Runtime Statistics - TO DO
     calculate_runtime_stats = DummyOperator(task_id='calculate_runtime_stats')
+    calculate_runtime_stats.set_upstream(match_timestamps)
 
     # 8. Load final table
     # load_final_table = BigQueryOperator(
@@ -93,6 +99,8 @@ schedule_interval=schedule_interval) as dag:
     # create GH action to download the file back to GH repo
 
     end_task = DummyOperator(task_id='end')
+    end_task.set_upstream([calculate_runtime_stats, add_calculated_features])
 
     # Define the order in which the tasks complete
-    start_task >> clean_data >> convert_to_features >> match_timestamps >> [add_calculated_features, calculate_runtime_stats] >> end_task 
+    # For now, I'm making them more explicit above, but can convert back to this format
+    # start_task >> clean_data >> convert_to_features >> match_timestamps >> [add_calculated_features, calculate_runtime_stats] >> end_task 
