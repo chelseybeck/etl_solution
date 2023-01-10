@@ -65,7 +65,7 @@ IN PROGRESS
    - total distance draveled
 8. Perform data quality (DQ) checks
 9. Load final table into transformed layer of data warehouse for downstream consumption
-![Airflow DAG](./img/Screenshot%202023-01-10%20at%208.57.31%20AM.png)
+![Airflow DAG](./img/airflow_dag.png)
 # Contributing
 To contribute, clone this repo and create a feature branch from main. Push changes to dev and open a PR to main.
 ## Adding tasks to the DAG
