@@ -1,0 +1,7 @@
+dataset_name,table_name,logical_name,column_name,data_type,definition
+raw_sensor_data_prod,raw_sensor_data,Time,time,TIMESTAMP,The time the measurement was taken.
+raw_sensor_data_prod,raw_sensor_data,Value,value,FLOAT,The measured value corresponding to the sensor taking the reading.
+raw_sensor_data_prod,raw_sensor_data,Field,field,STRING,"The field for the measured value. For encoders this indicates which cartesian coordinate the measurement is taken in (e.g. [x, y, z]) and for the load_cell (i.e. forcemeasuring device) this gives the direction of the force vector in cartesian coordinates (e.g. [fx, fy, fz])."
+raw_sensor_data_prod,raw_sensor_data,Robot ID,robot_id,INTEGER,The ID number for the robot being used (i.e. there are 2 robots so the robot_id is either 1 or 2).
+raw_sensor_data_prod,raw_sensor_data,Run Universally Unique Identifier,run_uuid,INTEGER,A random ID number assigned to the part being formed.
+raw_sensor_data_prod,raw_sensor_data,Sensor Type,sensor_type,STRING,The type of sensor reporting data (e.g. encoder = robot position in millimeters and load_cell = force measurements in Newtons).
