@@ -24,7 +24,7 @@ This is an example pipeline built as a solution to an [assignment provided by Ma
   - [sql](./sensor_data_etl/sql) - contains the SQL transformation logic for tasks
   - [trns_sensor_data.py](./sensor_data_etl/trns_sensor_data.py) - defines set of tasks in Python
 [.gitignore](./.gitignore) - designates files to exclude when commiting to Git
-[ASSIGNMENT.md](./ASSIGNMENT.md) - contains instructions for this assignment.
+[instructions.md](./instructions.md) - contains instructions for this assignment.
 [demo_video.mp4](./demo_video.mp4) - provided to give context to robot actions
 [README.md](README.MD) - project documentation (this file)
 
