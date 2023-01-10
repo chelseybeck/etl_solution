@@ -1,4 +1,4 @@
-SELECT * EXCEPT (field) 
+SELECT * EXCEPT (field, robot_id, sensor_type) 
 FROM 
 (
   SELECT
@@ -8,6 +8,7 @@ FROM
   CONCAT(field, '_', robot_id) AS new_field,
   robot_id,
   sensor_type,
+  run_uuid,
   record_hash_code,
   etl_update_ts
   FROM {{ params.clean_table_location }}
