@@ -6,7 +6,7 @@ TRIM(CAST(field AS STRING)) AS field,
 TRIM(CAST(robot_id AS STRING)) AS robot_id,
 CAST(run_uuid AS NUMERIC) AS run_uuid,
 TRIM(CAST(sensor_type AS STRING)) AS sensor_type
-FROM {{ params.raw_table_location }}),
+FROM {{ params.raw_table }}),
 
 recast AS 
 (SELECT
