@@ -15,7 +15,7 @@ This is an example pipeline built as a solution to an [assignment provided by Ma
 
 # Project Structure 
 - [.github](./.github) - contains GitHub Action files (CI)
-- [composer-ci.yaml] - syncs files inside of the [sensor_data_etl](./sensor_data_etl) directory with a DAG bucket inside of GCS
+  - [composer-ci.yaml](./.github/workflows/composer-ci.yaml) - syncs files inside of the [sensor_data_etl](./sensor_data_etl) directory with a DAG bucket inside of GCS
 - [data](./data) - contains raw and transformed files
   - adding a .parquet file matching the schema in the [raw sensor data dictionary](./data_dictionaries/raw_sensor_data_dictionary.csv) to this directory will trigger the transformation process. Once the transformation is complete, a GitHub Action can be run to download the transformed file in CSV format (in progress). Note: if the schema doesn't match the target structure, the workflow will fail on the first task.
 - [data_dictionaries](./data_dictionaries) - schemas for raw and transformed data
