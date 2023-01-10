@@ -11,7 +11,7 @@ FROM
   run_uuid,
   record_hash_code,
   etl_update_ts
-  FROM {{ params.clean_table_location }}
+  FROM {{ params.clean_table }}
 )
 PIVOT
 (

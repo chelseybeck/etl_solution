@@ -41,7 +41,7 @@ schedule_interval=schedule_interval) as dag:
     clean_data = BigQueryOperator(
         task_id="clean_data",
         sql = 'sql/clean_data.sql',
-        params = {"raw_table_location":f'{project_id}.{raw_src_dataset}.sensor_data'},
+        params = {"raw_table":f'{project_id}.{raw_src_dataset}.sensor_data'},
         destination_dataset_table = f'{project_id}.{etl_dataset}.w_sensor_data_clean',
         create_disposition = "CREATE_IF_NEEDED",
         write_disposition = "WRITE_TRUNCATE",
@@ -53,7 +53,7 @@ schedule_interval=schedule_interval) as dag:
     convert_to_features = BigQueryOperator(
         task_id="convert_to_features",
         sql = 'sql/convert_to_features.sql',
-        params={"clean_table_location":f'{project_id}.{etl_dataset}.w_sensor_data_clean'},
+        params={"clean_table":f'{project_id}.{etl_dataset}.w_sensor_data_clean'},
         destination_dataset_table = f'{project_id}.{etl_dataset}.w_features_converted',
         create_disposition = "CREATE_IF_NEEDED",
         write_disposition = "WRITE_TRUNCATE",
@@ -75,14 +75,18 @@ schedule_interval=schedule_interval) as dag:
     calculate_runtime_stats.set_upstream(match_timestamps)
 
     # Load final table
-    # load_final_table = BigQueryOperator(
-    #     task_id="load_final_table",
-    #     sql = 'sql/load_final_table.sql',
-    #     destination_dataset_table = f'{project_id}.{target_dataset}.',
-    #     create_disposition = "CREATE_IF_NEEDED",
-    #     write_disposition = "WRITE_TRUNCATE",
-    #     use_legacy_sql=False 
-    # )
+    load_final_table = BigQueryOperator(
+        task_id="load_final_table",
+        sql = 'sql/load_final_table.sql',
+        # Change source table below once rest of features are added
+        params = {"source_table": f'{project_id}.{etl_dataset}.w_features_converted'},
+        destination_dataset_table = f'{project_id}.{target_dataset}.trns_sensor_data',
+        create_disposition = "CREATE_IF_NEEDED",
+        write_disposition = "WRITE_TRUNCATE",
+        use_legacy_sql=False 
+    )
+
+    load_final_table.set_upstream(match_timestamps)
 
     # Export table as csv to bucket
     # create GH action to download the file back to GH repo
