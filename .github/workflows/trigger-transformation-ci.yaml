@@ -1,0 +1,33 @@
+name: 'Trigger Transformation CI'
+
+on:
+  pull_request:
+    branches:
+    - main
+    paths:
+    - 'sensor_data_files/out/**.parquet'
+
+jobs:
+  sync_bucket:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    defaults:
+      run:
+        working-directory: ./
+
+    steps:
+    - uses: 'actions/checkout@v3'
+
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: '${{ secrets.CLOUD_CONNECTION }}'
+    
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+
+    - name: 'Use gcloud CLI'
+      run: 'gsutil rsync -r -d sensor_data_files/out gs://sensor_data_files/in'
