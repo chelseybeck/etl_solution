@@ -1,12 +1,17 @@
 # Overview | Sensor Data ETL Pipeline
-This is an example pipeline built as a solution to an [assignment provided by Machina Labs](https://github.com/Machina-Labs/data_engineer_hw). It extracts robot sensor data from a Google Cloud Storage (GCS) bucket, runs tasks in Airflow to transform the data based on a set of specifications, and loads it into a BigQuery data lake for downstream consumption.
+*Please note: this solution is still being developed and several described features are in progress.*
+
+This is an example pipeline built as a solution to an [assignment provided by Machina Labs](https://github.com/Machina-Labs/data_engineer_hw). It extracts robot sensor data from a Google Cloud Storage (GCS) bucket, transform the data based on a set of specifications, and loads it into a BigQuery data lake for downstream consumption.
+
+The ultimate goal is for the process to be almost entirely automated. A user will be able to upload a file to the [sensor_data_files/out](./sensor_data_files/out) directory, the transformation workflow will be triggered on that event, and a resulting CSV with transformed data will land back into a GCS bucket. The CSV file can then be downloaded by the user to the [sensor_data_files/in](./sensor_data_files/in) directory via a manual GitHub Action. 
 
 # Tech Stack
-- Google Cloud Platform (GCP)
-- Google Cloud Storage (GCS)
-- Apache Airflow - workflow as code - written in Python
+- [Google Cloud Platform (GCP)](https://cloud.google.com/gcp)
+- [Google Cloud Storage (GCS)](https://cloud.google.com/storage/docs)
+- [Cloud Functions](https://cloud.google.com/functions/docs)
+- [Apache Airflow](https://airflow.apache.org/docs/apache-airflow/stable/) - workflow as code - written in Python
   - Running on a GCP hosted Composer cluster
-- BigQuery - Data lake
+- [BigQuery](https://cloud.google.com/bigquery/docs) - Data lake
   - Transformation logic written in standard SQL
 
 ### Why these tools?  
@@ -16,13 +21,13 @@ This is an example pipeline built as a solution to an [assignment provided by Ma
 # Project Structure 
 - [.github](./.github) - contains GitHub Action files (CI)
   - [composer-ci.yaml](./.github/workflows/composer-ci.yaml) - syncs files inside of the [sensor_data_etl](./sensor_data_etl) directory with a DAG bucket inside of GCS
-- [data](./data) - contains raw and transformed files
-  - adding a .parquet file matching the schema in the [raw sensor data dictionary](./data_dictionaries/raw_sensor_data_dictionary.csv) to this directory will trigger the transformation process. Once the transformation is complete, a GitHub Action can be run to download the transformed file in CSV format (in progress). Note: if the schema doesn't match the target structure, the workflow will fail on the first task.
 - [data_dictionaries](./data_dictionaries) - schemas for raw and transformed data
 - [img](./img) - contains images used in documentation
 - [sensor_data_etl](./sensor_data_etl) - files for the task workflow
   - [sql](./sensor_data_etl/sql) - contains the SQL transformation logic for tasks
   - [trns_sensor_data.py](./sensor_data_etl/trns_sensor_data.py) - defines set of tasks in Python
+- [sensor_data_files](./sensor_data_files) - contains raw and transformed files
+  - adding a .parquet file matching the schema in the [raw sensor data dictionary](./data_dictionaries/raw_sensor_data_dictionary.csv) to this directory will trigger the transformation process. Once the transformation is complete, a GitHub Action can be run to download the transformed file in CSV format (in progress). Note: if the schema doesn't match the target structure, the workflow will fail on the first task.
 - [.gitignore](./.gitignore) - designates files to exclude when commiting to Git
 - [instructions.md](./instructions.md) - contains instructions for this assignment.
 - [demo_video.mp4](./demo_video.mp4) - provided to give context to robot actions
