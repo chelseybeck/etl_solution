@@ -3,6 +3,7 @@ This is an example pipeline built as a solution to an assignment provided by [Ma
 
 # Tech Stack
 - Google Cloud Platform (GCP)
+- Google Cloud Storage (GCS)
 - Apache Airflow - workflow as code - written in Python
   - Running on a GCP hosted Composer cluster
 - BigQuery - Data lake
@@ -13,6 +14,19 @@ This is an example pipeline built as a solution to an assignment provided by [Ma
 - All are great choices for running ETL pipelines and were well-suited to this type of structured data.
 
 # Project Structure 
+[.github](./.github) - contains GitHub Action files (CI)
+[composer-ci.yaml] - syncs files inside of the [sensor_data_etl](./sensor_data_etl) directory with a DAG bucket inside of GCS
+[data](./data) - contains raw and transformed files
+  - adding a .parquet file matching the schema in the [raw sensor data dictionary](./data_dictionaries/raw_sensor_data_dictionary.csv) to this directory will trigger the transformation process. Once the transformation is complete, a GitHub Action can be run to download the transformed file in CSV format (in progress). Note: if the schema doesn't match the target structure, the workflow will fail on the first task.
+[data_dictionaries](./data_dictionaries) - schemas for raw and transformed data
+[img](./img) - contains images used in documentation
+[sensor_data_etl](./sensor_data_etl) - files for the task workflow
+  - [sql](./sensor_data_etl/sql) - contains the SQL transformation logic for tasks
+  - [trns_sensor_data.py](./sensor_data_etl/trns_sensor_data.py) - defines set of tasks in Python
+[.gitignore](./.gitignore) - designates files to exclude when commiting to Git
+[ASSIGNMENT.md](./ASSIGNMENT.md) - contains instructions for this assignment.
+[demo_video.mp4](./demo_video.mp4) - provided to give context to robot actions
+[README.md](README.MD) - project documentation (this file)
 
 # Continuous Integration / Development (CI/CD)
 ## Environments
@@ -51,7 +65,7 @@ IN PROGRESS
    - total distance draveled
 8. Perform data quality (DQ) checks
 9. Load final table into transformed layer of data warehouse for downstream consumption
-
+![Airflow DAG](./img/Screenshot%202023-01-10%20at%208.57.31%20AM.png)
 # Contributing
 To contribute, clone this repo and create a feature branch from main. Push changes to dev and open a PR to main.
 ## Adding tasks to the DAG
@@ -73,4 +87,5 @@ To update the transformation logic (add features, etc.), update the SQL file cor
 # Access
 
 # Future Improvements / Enhancements (In Progress)
-- Automate the CI pipeline so that when a parquet file is added to the data directory in the repo, it triggers the workflow in GCP and then returns a transformed file to the same directory (using cloud functions)
+- Automate the CI pipeline so that when a parquet file is added to the data directory in the repo, it triggers the workflow in GCP, runs transformation, then returns a transformed file to the bucket (using cloud functions). Transformed file can then be downloaded (via GH Action) by the user.
+- Add Airflow error handling to provide specificity in logs
