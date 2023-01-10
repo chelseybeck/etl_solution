@@ -1,7 +1,7 @@
 # Overview | Sensor Data ETL Pipeline
 *Please note: this solution is still being developed and several described features are in progress.*
 
-This is an example pipeline built as a solution to an [assignment provided by Machina Labs](https://github.com/Machina-Labs/data_engineer_hw). It extracts robot sensor data from a Google Cloud Storage (GCS) bucket, transform the data based on a set of specifications, and loads it into a BigQuery data lake for downstream consumption.
+This is an example pipeline built as a custom solution to an [assignment provided by Machina Labs](https://github.com/Machina-Labs/data_engineer_hw). It extracts robot sensor data from a Google Cloud Storage (GCS) bucket, transform the data based on a set of specifications, and loads it into a BigQuery data lake for downstream consumption.
 
 The ultimate goal is for the process to be almost entirely automated. A user will be able to upload a file to the [sensor_data_files/out](./sensor_data_files/out) directory, the transformation workflow will be triggered on that event, and a resulting CSV with transformed data will land back into a GCS bucket. The CSV file can then be downloaded by the user to the [sensor_data_files/in](./sensor_data_files/in) directory via a manual GitHub Action. 
 
