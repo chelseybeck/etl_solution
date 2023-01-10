@@ -1,7 +1,7 @@
 SELECT  
 time,
 fx_1,
-fx_1,
+fx_2,
 fy_1,
 fy_2,
 fz_1,
