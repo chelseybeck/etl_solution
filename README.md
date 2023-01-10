@@ -14,19 +14,19 @@ This is an example pipeline built as a solution to an [assignment provided by Ma
 - All are great choices for running ETL pipelines and were well-suited to this type of structured data.
 
 # Project Structure 
-[.github](./.github) - contains GitHub Action files (CI)
-[composer-ci.yaml] - syncs files inside of the [sensor_data_etl](./sensor_data_etl) directory with a DAG bucket inside of GCS
-[data](./data) - contains raw and transformed files
+- [.github](./.github) - contains GitHub Action files (CI)
+- [composer-ci.yaml] - syncs files inside of the [sensor_data_etl](./sensor_data_etl) directory with a DAG bucket inside of GCS
+- [data](./data) - contains raw and transformed files
   - adding a .parquet file matching the schema in the [raw sensor data dictionary](./data_dictionaries/raw_sensor_data_dictionary.csv) to this directory will trigger the transformation process. Once the transformation is complete, a GitHub Action can be run to download the transformed file in CSV format (in progress). Note: if the schema doesn't match the target structure, the workflow will fail on the first task.
-[data_dictionaries](./data_dictionaries) - schemas for raw and transformed data
-[img](./img) - contains images used in documentation
-[sensor_data_etl](./sensor_data_etl) - files for the task workflow
+- [data_dictionaries](./data_dictionaries) - schemas for raw and transformed data
+- [img](./img) - contains images used in documentation
+- [sensor_data_etl](./sensor_data_etl) - files for the task workflow
   - [sql](./sensor_data_etl/sql) - contains the SQL transformation logic for tasks
   - [trns_sensor_data.py](./sensor_data_etl/trns_sensor_data.py) - defines set of tasks in Python
-[.gitignore](./.gitignore) - designates files to exclude when commiting to Git
-[instructions.md](./instructions.md) - contains instructions for this assignment.
-[demo_video.mp4](./demo_video.mp4) - provided to give context to robot actions
-[README.md](README.MD) - project documentation (this file)
+- [.gitignore](./.gitignore) - designates files to exclude when commiting to Git
+- [instructions.md](./instructions.md) - contains instructions for this assignment.
+- [demo_video.mp4](./demo_video.mp4) - provided to give context to robot actions
+- [README.md](README.MD) - project documentation (this file)
 
 # Continuous Integration / Development (CI/CD)
 ## Environments
