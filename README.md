@@ -15,7 +15,7 @@ The ultimate goal is for the process to be almost entirely automated. A user wil
   - Transformation logic written in standard SQL
 
 ### Why these tools?  
-- These are tools that I work with every day and am most familiar with. I have a GCP instance set up as a playground and was able to leverage those resources to automate this solution. 
+- These are tools that I work with every day and am most familiar with. I have a GCP instance set up as a playground and was able to leverage those resources to automate this solution in the cloud.
 - All are great choices for running ETL pipelines and were well-suited to this type of structured data.
 
 # Project Structure 
@@ -71,7 +71,7 @@ Code deployments are separated into two main environment branches, dev and main.
 
 ![Airflow DAG](./img/airflow_dag.png)
 # Contributing
-To contribute, clone this repo and create a feature branch from main. Push changes to dev and open a PR to main.
+To contribute, clone this repo and create a feature branch from main. Push changes to dev and open a PR from dev to main.
 ## Adding tasks to the DAG
 Add a task to the [trns_sensor_data.py](sensor_data_etl/trns_sensor_data.py) workflow. Example task:
 
