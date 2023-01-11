@@ -16,7 +16,7 @@ The ultimate goal is for the process to be almost entirely automated. A user wil
 
 ### Why these tools?  
 - These are tools that I work with every day and am most familiar with. I wanted to build an automated solution using cloud resources to highlight my strongest skillsets.
-- All are great choices for running ETL pipelines and were well-suited to this type of structured data.
+- All are great choices for running ETL pipelines and were well-suited to this type of structured data. This same workflow could be set up on any other cloud provider.
 
 # Project Structure 
 - [.github](./.github) - contains GitHub Action files (CI)
@@ -84,9 +84,12 @@ Add a task to the [trns_sensor_data.py](sensor_data_etl/trns_sensor_data.py) wor
         create_disposition = "CREATE_IF_NEEDED",
         write_disposition = "WRITE_TRUNCATE",
         use_legacy_sql=False 
-    )
+      )
+      name_of_task.set_upstream(name_of_task_upstream)
 
-The above example task will create a new table in BigQuery based on whatever SQL logic is in the .sql file referenced. Params are additional parameters you can pass to the SQL file. The destination dataset table should be updated with the full table location. Airflow is flexible and extendible - check out their [library of operators](https://airflow.apache.org/docs/apache-airflow/stable/concepts/operators.html) for a better idea of what all tasks can be added.
+The above example task will create a new table in BigQuery based on whatever SQL logic is in the .sql file referenced. Params are additional parameters you can pass to the SQL file. The destination dataset table should be updated with the full table location (in GCP it's project.dataset.table). You set the task by calling name_of_task() or if there are dependencies set an upstream task to wait on using set_upstream.
+
+Airflow is flexible and extendible - check out their [library of operators](https://airflow.apache.org/docs/apache-airflow/stable/concepts/operators.html) for a better idea of what all tasks can be added.
 ## Updating Transformation Logic
 To update the transformation logic (add features, etc.), update the SQL file corresponding to the task.
 
@@ -94,6 +97,8 @@ To update the transformation logic (add features, etc.), update the SQL file cor
 As soon as this solution is complete and fully tested, I can provide access to anyone at Machina Labs who wishes to upload a file, trigger the process, and retrieve the results. 
 
 A sample of the transformed features (prior to matching timestamps) can be found [here](https://datastudio.google.com/reporting/0b0d4ef7-3b85-49f8-8f77-89d28a475c9d) and I will update with links to view the final tables once the final transformation tasks are added. 
+
+I'm also happy to grant viewer access to BigQuery and Composer to view the tables and workflows (provide gmail address).
 
 # Future Improvements / Enhancements (In Progress)
 - Automate the CI pipeline so that when a parquet file is added to the data directory in the repo, it triggers the workflow in GCP, runs transformation, then returns a transformed file to the bucket (using cloud functions). Transformed file can then be downloaded (via GH Action) by the user.
