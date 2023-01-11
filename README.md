@@ -16,7 +16,7 @@ The ultimate goal is for the process to be almost entirely automated. A user wil
 
 ### Why these tools?  
 - These are tools that I work with every day and am most familiar with. I wanted to build an automated solution using cloud resources to highlight my strongest skillsets.
-- All are great choices for running ETL pipelines and were well-suited to this type of structured data. This same workflow could be set up on any other cloud provider.
+- All are great choices for running ETL pipelines and were well-suited to this type of structured data. This workflow could be set up on any other cloud provider with minimal code changes.
 
 # Project Structure 
 - [.github](./.github) - contains GitHub Action files (CI)
@@ -39,12 +39,13 @@ The ultimate goal is for the process to be almost entirely automated. A user wil
 Code deployments are separated into two main environment branches, dev and main. Code deployed to the dev branch allows for testing before pushing changes to the cloud. Merging changes to main will push them to the cloud.
 
 ## GitHub Actions
-- composer-ci.yaml - used to sync DAG directory (sensor_data_etl) with DAG bucket in GCP 
+- [composer-ci.yaml](./.github/workflows/composer-ci.yaml) - used to sync DAG directory (sensor_data_etl) with DAG bucket in GCP 
   - this action runs when a change is made to a file inside of the sensor_data_etl directory
   - it syncs with DAG bucket in GCP that houses Airflow DAGs
+- [trigger-transformation-ci.yaml]()
 
-# ETL Data Flow Narrative
-1. Extract parquet file from GCS bucket and import into a BigQuery table in the raw layer dataset (raw_sensor_data_prod) - DONE
+# ETL Workflow 
+1. Extract parquet file from GCS bucket and into a BigQuery table in the raw layer dataset (raw_sensor_data_prod) - IN PROGRESS
 2. Clean raw data - DONE
     - Deduplicate & trim
       - cast all columns to correct datatype based on the raw sensor data dictionary
@@ -71,6 +72,7 @@ Code deployments are separated into two main environment branches, dev and main.
 8. Load final table into transformed layer of data lake for downstream consumption - TO DO
 
 ![Airflow DAG](./img/airflow_dag.png)
+
 # Contributing
 To contribute, clone this repo and create a feature branch from main. Push changes to dev and open a PR from dev to main.
 ## Adding tasks to the DAG
@@ -89,10 +91,9 @@ Add a task to the [trns_sensor_data.py](sensor_data_etl/trns_sensor_data.py) wor
 
 The above example task will create a new table in BigQuery based on whatever SQL logic is in the .sql file referenced. Params are additional parameters you can pass to the SQL file. The destination dataset table should be updated with the full table location (in GCP it's project.dataset.table). You set the task by calling name_of_task() or if there are dependencies set an upstream task to wait on using set_upstream.
 
-Airflow is flexible and extendible - check out their [library of operators](https://airflow.apache.org/docs/apache-airflow/stable/concepts/operators.html) for a better idea of what all tasks can be added.
+Airflow is flexible and extendible - check out their [library of operators](https://airflow.apache.org/docs/apache-airflow/stable/concepts/operators.html) for information on what all tasks can be added.
 ## Updating Transformation Logic
 To update the transformation logic (add features, etc.), update the SQL file corresponding to the task.
-
 ## Access
 As soon as this solution is complete and fully tested, I can provide access to anyone at Machina Labs who wishes to upload a file, trigger the process, and retrieve the results. 
 
@@ -100,6 +101,10 @@ A sample of the transformed features (prior to matching timestamps) can be found
 
 I'm also happy to grant viewer access to BigQuery and Composer to view the tables and workflows (provide gmail address).
 
-# Future Improvements / Enhancements (In Progress)
-- Automate the CI pipeline so that when a parquet file is added to the data directory in the repo, it triggers the workflow in GCP, runs transformation, then returns a transformed file to the bucket (using cloud functions). Transformed file can then be downloaded (via GH Action) by the user.
-- Add Airflow exception operator to provide specificity in logs
+# To do (not in order)
+- [ ] integrate logic for remaining transformation tasks
+- [ ] add data flow diagram to visually represent full solution
+- [ ] add Airflow exception logging
+- [ ] add tests
+- [ ] add data quality checks
+- [ ] document assumptions/choices/questions
