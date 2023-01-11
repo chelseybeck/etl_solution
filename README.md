@@ -100,3 +100,11 @@ As soon as this solution is complete and fully tested, I can provide access to a
 A sample of the transformed features (prior to matching timestamps) can be found [here](https://datastudio.google.com/reporting/0b0d4ef7-3b85-49f8-8f77-89d28a475c9d) and I will update with links to view the final tables once the final transformation tasks are added. 
 
 I'm also happy to grant viewer access to BigQuery and Composer to view the tables and workflows (provide gmail address).
+
+# To do (not in order)
+- [ ] integrate logic for remaining transformation tasks
+- [ ] add data flow diagram to visually represent full solution
+- [ ] add Airflow exception logging
+- [ ] add tests
+- [ ] add data quality checks
+- [ ] document assumptions/choices/questions
