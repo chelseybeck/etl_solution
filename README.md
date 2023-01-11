@@ -73,6 +73,19 @@ Code deployments are separated into two main environment branches, dev and main.
 
 ![Airflow DAG](./img/airflow_dag.png)
 
+# Cloud Infrastructure
+The cloud resources used for this solution were deployed through terraform as shown in the [terraform](./terraform) directory. List of cloud resources created and used for this project:
+- Composer/Airflow instance
+- 2 cloud storage buckets
+  - sensor_data_files (extraction bucket)
+  - dag bucket (used for Airflow DAG files - syncs to [sensor_data_etl](./sensor_data_etl) directory)
+- 3 BigQuery datasets
+  - raw_sensor_data - houses raw tables as imported from .parquet files
+  - trns_sensor_data - houses transformed tables
+  - w_sensor_data - houses work (staging) tables used in transformation 
+- IAM 
+  - 1 service account - key in GitHub secrets
+
 # Contributing
 To contribute, clone this repo and create a feature branch from main. Push changes to dev and open a PR from dev to main.
 ## Adding tasks to the DAG
