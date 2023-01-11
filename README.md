@@ -68,7 +68,7 @@ Code deployments are separated into two main environment branches, dev and main.
    - total runtime
    - total distance draveled
 7. Perform data quality (DQ) checks - TO DO
-8. Load final table into transformed layer of data warehouse for downstream consumption - TO DO
+8. Load final table into transformed layer of data lake for downstream consumption - TO DO
 
 ![Airflow DAG](./img/airflow_dag.png)
 # Contributing
@@ -93,7 +93,7 @@ Airflow is flexible and extendible - check out their [library of operators](http
 ## Updating Transformation Logic
 To update the transformation logic (add features, etc.), update the SQL file corresponding to the task.
 
-# Access
+## Access
 As soon as this solution is complete and fully tested, I can provide access to anyone at Machina Labs who wishes to upload a file, trigger the process, and retrieve the results. 
 
 A sample of the transformed features (prior to matching timestamps) can be found [here](https://datastudio.google.com/reporting/0b0d4ef7-3b85-49f8-8f77-89d28a475c9d) and I will update with links to view the final tables once the final transformation tasks are added. 
