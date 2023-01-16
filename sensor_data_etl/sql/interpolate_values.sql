@@ -7,6 +7,7 @@ WITH main AS (
   interpolate AS (
   SELECT
     time,
+    run_uuid,
     IFNULL(fx_1, (fx_1_start_value + fx_1_end_value) / 2) AS fx_1,
     IFNULL(fy_1, (fy_1_start_value + fy_1_end_value) / 2) AS fy_1,
     IFNULL(fz_1, (fz_1_start_value + fz_1_end_value) / 2) AS fz_1,
@@ -22,6 +23,7 @@ WITH main AS (
   FROM (
     SELECT
       time,
+      run_uuid,
       fx_1,
       FIRST_VALUE(fx_1 IGNORE NULLS) OVER win1 AS fx_1_start_value,
       FIRST_VALUE(fx_1 IGNORE NULLS) OVER win2 AS fx_1_end_value,
