@@ -41,7 +41,7 @@ schedule_interval=schedule_interval) as dag:
     clean_format = BigQueryOperator(
         task_id="clean_format",
         sql = 'sql/clean_format.sql',
-        params = {"raw_table":f'{project_id}.{raw_src_dataset}.sensor_data'},
+        params = {"source_table":f'{project_id}.{raw_src_dataset}.sensor_data'},
         destination_dataset_table = f'{project_id}.{etl_dataset}.w_sensor_data_clean',
         create_disposition = "CREATE_IF_NEEDED",
         write_disposition = "WRITE_TRUNCATE",
@@ -98,7 +98,7 @@ schedule_interval=schedule_interval) as dag:
 
     # Load final table
     load_trns_table = BigQueryOperator(
-        task_id="load_base_table",
+        task_id="load_trns_table",
         sql = 'sql/load_final_table.sql',
         # Change source table below once rest of features are added
         params = {"source_table": f'{project_id}.{etl_dataset}.w_values_interpolated'},
@@ -114,7 +114,7 @@ schedule_interval=schedule_interval) as dag:
     # create GH action to download the file back to GH repo
 
     end_task = DummyOperator(task_id='end')
-    end_task.set_upstream([calculate_runtime_stats, add_calculated_features])
+    end_task.set_upstream([calculate_runtime_stats, load_trns_table])
 
     # Define the order in which the tasks complete
     # For now, I'm making them more explicit above, but can convert back to this format
