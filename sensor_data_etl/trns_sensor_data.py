@@ -75,10 +75,10 @@ schedule_interval=schedule_interval) as dag:
 
     match_values_timestamps.set_upstream(convert_to_features)
 
+    # Interpolate null values between rows
     interpolate_values = BigQueryOperator(
         task_id="interpolate_values",
         sql = 'sql/interpolate_values.sql',
-        # Change source table below once rest of features are added
         params = {"source_table": f'{project_id}.{etl_dataset}.w_timestamps_matched'},
         destination_dataset_table = f'{project_id}.{etl_dataset}.w_values_interpolated',
         create_disposition = "CREATE_IF_NEEDED",
@@ -88,16 +88,16 @@ schedule_interval=schedule_interval) as dag:
 
     interpolate_values.set_upstream(match_values_timestamps)
 
-    # Add engineered/calculated features - TO DO
+    # Add engineered/calculated features - IN PROGRESS
     add_calculated_features = DummyOperator(task_id='add_calculated_features')
-    add_calculated_features.set_upstream(match_values_timestamps)
+    add_calculated_features.set_upstream(interpolate_values)
 
-    # Calculate Runtime Statistics - TO DO
+    # Calculate Runtime Statistics - IN PROGRESS
     calculate_runtime_stats = DummyOperator(task_id='calculate_runtime_stats')
-    calculate_runtime_stats.set_upstream(match_values_timestamps)
+    calculate_runtime_stats.set_upstream(interpolate_values)
 
     # Load final table
-    load_base_table = BigQueryOperator(
+    load_trns_table = BigQueryOperator(
         task_id="load_base_table",
         sql = 'sql/load_final_table.sql',
         # Change source table below once rest of features are added
@@ -108,7 +108,7 @@ schedule_interval=schedule_interval) as dag:
         use_legacy_sql=False 
     )
 
-    load_base_table.set_upstream(match_values_timestamps)
+    load_trns_table.set_upstream(add_calculated_features)
 
     # Export table as csv to bucket
     # create GH action to download the file back to GH repo
