@@ -1,14 +1,17 @@
 dataset_name,table_name,logical_name,column_name,data_type,definition
 trns_sensor_data_prod,trns_sensor_data,Time,time,TIMESTAMP,The time the measurement was taken.
-trns_sensor_data_prod,trns_sensor_data,Robot 1 x Force,fx_1,FLOAT,The cartesian coordinate of the force as measured on the x plane for robot one.
-trns_sensor_data_prod,trns_sensor_data,Robot 2 x Force,fx_2,FLOAT,The cartesian coordinate of the force as measured on the x plane for robot two.
-trns_sensor_data_prod,trns_sensor_data,Robot 1 y Force,fy_1,FLOAT,The cartesian coordinate of the force as measured on the y plane for robot one.
-trns_sensor_data_prod,trns_sensor_data,Robot 2 y Force,fy_2,FLOAT,The cartesian coordinate of the force as measured on the y plane for robot two.
-trns_sensor_data_prod,trns_sensor_data,Robot 1 z Force,fz_1,FLOAT,The cartesian coordinate of the force as measured on the z plane for robot one.
-trns_sensor_data_prod,trns_sensor_data,Robot 2 z Force,fz_2,FLOAT,The cartesian coordinate of the force as measured on the z plane for robot two.
+trns_sensor_data_prod,trns_sensor_data,Robot 1 x Force,fx_1,FLOAT,The measurement of force in Newtons as measured on the x plane for robot one.
+trns_sensor_data_prod,trns_sensor_data,Robot 2 x Force,fx_2,FLOAT,The measurement of force in Newtons as measured on the x plane for robot two.
+trns_sensor_data_prod,trns_sensor_data,Robot 1 y Force,fy_1,FLOAT,The measurement of force in Newtons as measured on the y plane for robot one.
+trns_sensor_data_prod,trns_sensor_data,Robot 2 y Force,fy_2,FLOAT,The measurement of force in Newtons as measured on the y plane for robot two.
+trns_sensor_data_prod,trns_sensor_data,Robot 1 z Force,fz_1,FLOAT,The measurement of force in Newtons as measured on the z plane for robot one.
+trns_sensor_data_prod,trns_sensor_data,Robot 2 z Force,fz_2,FLOAT,The measurement of force in Newtons as measured on the z plane for robot two.
 trns_sensor_data_prod,trns_sensor_data,Robot 1 x Location,x_1,FLOAT,The cartesian coordinate from which the measurement is taken on the x plane for robot one.
 trns_sensor_data_prod,trns_sensor_data,Robot 2 x Location,x_2,FLOAT,The cartesian coordinate from which the measurement is taken on the x plane for robot two.
 trns_sensor_data_prod,trns_sensor_data,Robot 1 y Location,y_1,FLOAT,The cartesian coordinate from which the measurement is taken on the y plane for robot one.
 trns_sensor_data_prod,trns_sensor_data,Robot 2 y Location,y_2,FLOAT,The cartesian coordinate from which the measurement is taken on the y plane for robot two.
 trns_sensor_data_prod,trns_sensor_data,Robot 1 z Location,z_1,FLOAT,The cartesian coordinate from which the measurement is taken on the z plane for robot one.
 trns_sensor_data_prod,trns_sensor_data,Robot 2 z Location,z_2,FLOAT,The cartesian coordinate from which the measurement is taken on the z plane for robot two.
+trns_sensor_data_prod,trns_sensor_data,Transformation Record Hash Code,trns_record_hash_code,STRING,A unique identifier for the transformed row.
+trns_sensor_data_prod,trns_sensor_data,ETL Update Timestamp,etl_update_ts,TIMESTAMP,The last time the row was updated.
+trns_sensor_data_prod,trns_sensor_data,Run Universally Unique Identifier,run_uuid,STRING,A random ID number assigned to the part being formed.
