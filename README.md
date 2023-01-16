@@ -1,7 +1,7 @@
 # Overview | Sensor Data ETL Pipeline
 *Please note: this solution is still being developed and several described features are in progress.*
 
-This is an example pipeline built as a custom solution to an [assignment provided by Machina Labs](https://github.com/Machina-Labs/data_engineer_hw). It extracts robot sensor data from a Google Cloud Storage (GCS) bucket, transform the data based on a set of specifications, and loads it into a BigQuery data lake for downstream consumption.
+This is an example pipeline built as a custom solution to an [assignment provided by Machina Labs](https://github.com/Machina-Labs/data_engineer_hw). It extracts robot sensor data from a Google Cloud Storage (GCS) bucket, transforms the data based on a set of specifications, and loads it into a BigQuery data lake for downstream consumption.
 
 The ultimate goal is for the process to be almost entirely automated. A user will be able to upload a file to the [sensor_data_files/out](./sensor_data_files/out) directory, the transformation workflow will be triggered on that event, and a resulting CSV with transformed data will land back into a GCS bucket. The CSV file can then be downloaded by the user to the [sensor_data_files/in](./sensor_data_files/in) directory via a manual GitHub Action. 
 
@@ -55,21 +55,21 @@ Code deployments are separated into two main environment branches, dev and main.
     - create hash codes (primary key) to tie back to raw layer
       - identifies each row w/ a unique key
       - helps in preventing appending duplicate data
-4. Match timestamps with measurements - IN PROGRESS
-5. Calculated Features - TO DO 
+4. Match timestamps with measurements - DONE
+5. Calculated Features - IN PROGRESS 
    - 6 Velocity values (vx_1, vy_1, vz_1, vx_2, vy_2, vz_2)
    - 6 Acceleration values (ax_1, ay_1, az_1, ax_2, ay_2, az_2)
    - Total Velocity (v1, v2)
    - Total Acceleration (a1, a2)
    - Total Force (f1, f2)
-6. Runtime Statistics - TO DO
+6. Runtime Statistics - IN PROGRESS
    - run_uuid
    - run start time
    - run stop time
    - total runtime
    - total distance draveled
 7. Perform data quality (DQ) checks - TO DO
-8. Load final table into transformed layer of data lake for downstream consumption - TO DO
+8. Load final table into transformed layer of data lake for downstream consumption - DONE
 
 ![Airflow DAG](./img/airflow_dag.png)
 

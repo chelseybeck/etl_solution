@@ -9,9 +9,9 @@ FROM
   robot_id,
   sensor_type,
   run_uuid,
-  record_hash_code,
-  etl_update_ts
-  FROM {{ params.clean_table }}
+  raw_record_hash_code,
+  CURRENT_TIMESTAMP AS etl_update_ts
+  FROM {{ params.source_table }}
 )
 PIVOT
 (
