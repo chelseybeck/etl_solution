@@ -64,10 +64,14 @@ WITH main AS (
       main
     WINDOW
       win1 AS (
+      PARTITION BY
+        run_uuid
       ORDER BY
         time DESC ROWS BETWEEN CURRENT ROW
         AND UNBOUNDED FOLLOWING),
       win2 AS (
+      PARTITION BY
+        run_uuid
       ORDER BY
         time ROWS BETWEEN CURRENT ROW
         AND UNBOUNDED FOLLOWING)
