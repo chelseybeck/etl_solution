@@ -77,24 +77,30 @@ WITH main AS (
         AND UNBOUNDED FOLLOWING)
     ORDER BY
       time ) )
--- above interpolation may not catch the first few rows
+-- above interpolation will not fill rows where first value is null
 -- fill remaining null values with first populated value
 SELECT
   time,
-  IFNULL(fx_1, LAST_VALUE(fx_1 IGNORE NULLS) OVER (ORDER BY time DESC)) AS fx_1,
-  IFNULL(fy_1, LAST_VALUE(fy_1 IGNORE NULLS) OVER (ORDER BY time DESC)) AS fy_1,
-  IFNULL(fz_1, LAST_VALUE(fz_1 IGNORE NULLS) OVER (ORDER BY time DESC)) AS fz_1,
-  IFNULL(x_1, LAST_VALUE(x_1 IGNORE NULLS) OVER (ORDER BY time DESC)) AS x_1,
-  IFNULL(y_1, LAST_VALUE(y_1 IGNORE NULLS) OVER (ORDER BY time DESC)) AS y_1,
-  IFNULL(z_1, LAST_VALUE(z_1 IGNORE NULLS) OVER (ORDER BY time DESC)) AS z_1,
-  IFNULL(fx_2, LAST_VALUE(fx_2 IGNORE NULLS) OVER (ORDER BY time DESC)) AS fx_2,
-  IFNULL(fy_2, LAST_VALUE(fy_2 IGNORE NULLS) OVER (ORDER BY time DESC)) AS fy_2,
-  IFNULL(fz_2, LAST_VALUE(fz_2 IGNORE NULLS) OVER (ORDER BY time DESC)) AS fz_2,
-  IFNULL(x_2, LAST_VALUE(x_2 IGNORE NULLS) OVER (ORDER BY time DESC)) AS x_2,
-  IFNULL(y_2, LAST_VALUE(y_2 IGNORE NULLS) OVER (ORDER BY time DESC)) AS y_2,
-  IFNULL(z_2, LAST_VALUE(z_2 IGNORE NULLS) OVER (ORDER BY time DESC)) AS z_2,
+  IFNULL(fx_1, LAST_VALUE(fx_1 IGNORE NULLS) OVER win3) AS fx_1,
+  IFNULL(fy_1, LAST_VALUE(fy_1 IGNORE NULLS) OVER win3) AS fy_1,
+  IFNULL(fz_1, LAST_VALUE(fz_1 IGNORE NULLS) OVER win3) AS fz_1,
+  IFNULL(x_1, LAST_VALUE(x_1 IGNORE NULLS) OVER win3) AS x_1,
+  IFNULL(y_1, LAST_VALUE(y_1 IGNORE NULLS) OVER win3) AS y_1,
+  IFNULL(z_1, LAST_VALUE(z_1 IGNORE NULLS) OVER win3) AS z_1,
+  IFNULL(fx_2, LAST_VALUE(fx_2 IGNORE NULLS) OVER win3) AS fx_2,
+  IFNULL(fy_2, LAST_VALUE(fy_2 IGNORE NULLS) OVER win3) AS fy_2,
+  IFNULL(fz_2, LAST_VALUE(fz_2 IGNORE NULLS) OVER win3) AS fz_2,
+  IFNULL(x_2, LAST_VALUE(x_2 IGNORE NULLS) OVER win3) AS x_2,
+  IFNULL(y_2, LAST_VALUE(y_2 IGNORE NULLS) OVER win3) AS y_2,
+  IFNULL(z_2, LAST_VALUE(z_2 IGNORE NULLS) OVER win3) AS z_2,
   run_uuid 
 FROM
   interpolate
+WINDOW 
+  win3 AS (
+  PARTITION BY
+    run_uuid 
+  ORDER BY
+    time DESC )
 ORDER BY
   time
