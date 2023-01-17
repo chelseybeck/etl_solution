@@ -3,8 +3,6 @@
 
 This is an example pipeline built as a custom solution to an [assignment provided by Machina Labs](https://github.com/Machina-Labs/data_engineer_hw). It extracts robot sensor data from a Google Cloud Storage (GCS) bucket, transforms the data based on a set of specifications, and loads it into a BigQuery data lake for downstream consumption.
 
-The ultimate goal is for the process to be almost entirely automated. A user will be able to upload a file to the [sensor_data_files/out](./sensor_data_files/out) directory, the transformation workflow will be triggered on that event, and a resulting CSV with transformed data will land back into a GCS bucket. The CSV file can then be downloaded by the user to the [sensor_data_files/in](./sensor_data_files/in) directory via a manual GitHub Action. 
-
 # Tech Stack
 - [Google Cloud Platform (GCP)](https://cloud.google.com/gcp)
 - [Google Cloud Storage (GCS)](https://cloud.google.com/storage/docs)
@@ -108,16 +106,6 @@ Airflow is flexible and extendible - check out their [library of operators](http
 ## Updating Transformation Logic
 To update the transformation logic (add features, etc.), update the SQL file corresponding to the task.
 ## Access
-As soon as this solution is complete and fully tested, I can provide access to anyone at Machina Labs who wishes to upload a file, trigger the process, and retrieve the results. 
-
-A sample of the transformed features (prior to matching timestamps) can be found [here](https://datastudio.google.com/reporting/0b0d4ef7-3b85-49f8-8f77-89d28a475c9d) and I will update with links to view the final tables once the final transformation tasks are added. 
+As soon as this solution is complete and fully tested, I can provide access to anyone at Machina Labs who wishes to upload a file, trigger the process, and retrieve the results.  
 
 I'm also happy to grant viewer access to BigQuery and Composer to view the tables and workflows (provide gmail address).
-
-# To do (not in order)
-- [ ] integrate logic for remaining transformation tasks
-- [ ] add data flow diagram to visually represent full solution
-- [ ] add Airflow exception logging
-- [ ] add tests
-- [ ] add data quality checks
-- [ ] document assumptions/choices/questions
