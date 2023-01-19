@@ -61,8 +61,7 @@ schedule_interval=schedule_interval) as dag:
     )
     convert_to_features.set_upstream(clean_format)
 
-    # Using dummy operators for tasks not yet written
-    # Match timestamps with measurements - DONE
+    # Match timestamps with measurements 
     match_values_timestamps = BigQueryOperator(
         task_id="match_values_timestamps",
         sql = 'sql/match_values_timestamps.sql',
@@ -80,41 +79,94 @@ schedule_interval=schedule_interval) as dag:
         task_id="interpolate_values",
         sql = 'sql/interpolate_values.sql',
         params = {"source_table": f'{project_id}.{etl_dataset}.w_timestamps_matched'},
-        destination_dataset_table = f'{project_id}.{etl_dataset}.w_values_interpolated',
+        destination_dataset_table = f'{project_id}.{target_dataset}.trns_base_values',
         create_disposition = "CREATE_IF_NEEDED",
         write_disposition = "WRITE_TRUNCATE",
         use_legacy_sql=False 
     )
-
     interpolate_values.set_upstream(match_values_timestamps)
 
-    # Add engineered/calculated features - IN PROGRESS
-    add_calculated_features = DummyOperator(task_id='add_calculated_features')
-    add_calculated_features.set_upstream(interpolate_values)
-
-    # Calculate Runtime Statistics - IN PROGRESS
-    calculate_runtime_stats = DummyOperator(task_id='calculate_runtime_stats')
-    calculate_runtime_stats.set_upstream(interpolate_values)
-
-    # Load final table
-    load_trns_table = BigQueryOperator(
-        task_id="load_trns_table",
-        sql = 'sql/load_final_table.sql',
-        # Change source table below once rest of features are added
-        params = {"source_table": f'{project_id}.{etl_dataset}.w_values_interpolated'},
-        destination_dataset_table = f'{project_id}.{target_dataset}.trns_sensor_data',
+    # Calculate Velocity
+    calculate_velocity = BigQueryOperator(
+        task_id="calculate_velocity",
+        sql = 'sql/calculate_velocity.sql',
+        params = {"source_table": f'{project_id}.{target_dataset}.trns_base_values'},
+        destination_dataset_table = f'{project_id}.{etl_dataset}.w_velocity_calculated',
         create_disposition = "CREATE_IF_NEEDED",
         write_disposition = "WRITE_TRUNCATE",
         use_legacy_sql=False 
     )
+    calculate_velocity.set_upstream(interpolate_values)
 
-    load_trns_table.set_upstream(add_calculated_features)
+    # Calculate Acceleration
+    calculate_acceleration = BigQueryOperator(
+        task_id="calculate_acceleration",
+        sql = 'sql/calculate_acceleration.sql',
+        params = {"source_table": f'{project_id}.{etl_dataset}.w_velocity_calculated'},
+        destination_dataset_table = f'{project_id}.{etl_dataset}.w_acceleration_calculated',
+        create_disposition = "CREATE_IF_NEEDED",
+        write_disposition = "WRITE_TRUNCATE",
+        use_legacy_sql=False 
+    )
+    calculate_velocity.set_upstream(calculate_velocity)
 
-    # Export table as csv to bucket
-    # create GH action to download the file back to GH repo
+    # Calculate Force
+    calculate_force = BigQueryOperator(
+        task_id="calculate_force",
+        sql = 'sql/calculate_force.sql',
+        params = {"source_table": f'{project_id}.{target_dataset}.trns_base_values'},
+        destination_dataset_table = f'{project_id}.{etl_dataset}.w_force_calculated',
+        create_disposition = "CREATE_IF_NEEDED",
+        write_disposition = "WRITE_TRUNCATE",
+        use_legacy_sql=False 
+    )
+    calculate_force.set_upstream(interpolate_values)
+
+    # Combine Totals
+    combine_totals = BigQueryOperator(
+        task_id="combine_totals",
+        sql = 'sql/combine_totals.sql',
+        params = {
+            "velocity_table": f'{project_id}.{etl_dataset}.w_velocity_calculated',
+            "acceleration_table": f'{project_id}.{etl_dataset}.w_acceleration_calculated',
+            "force_table": f'{project_id}.{etl_dataset}.w_force_calculated'
+        },
+        destination_dataset_table = f'{project_id}.{target_dataset}.trns_calculated_features',
+        create_disposition = "CREATE_IF_NEEDED",
+        write_disposition = "WRITE_TRUNCATE",
+        use_legacy_sql=False 
+    )
+    combine_totals.set_upstream([calculate_velocity, calculate_acceleration, calculate_force])
+
+    # Summarize Totals
+    summarize_totals = BigQueryOperator(
+        task_id="summarize_totals",
+        sql = 'sql/summarize_totals.sql',
+        params = {"source_table": f'{project_id}.{target_dataset}.trns_calculated_features'},
+        destination_dataset_table = f'{project_id}.{target_dataset}.trns_calculated_summary',
+        create_disposition = "CREATE_IF_NEEDED",
+        write_disposition = "WRITE_TRUNCATE",
+        use_legacy_sql=False 
+    )
+    summarize_totals.set_upstream(combine_totals)
+
+    # Calculate Runtime Statistics
+    calculate_runtime_stats = BigQueryOperator(
+        task_id="calculate_runtime_stats",
+        sql = 'sql/calculate_runtime_stats.sql',
+        params = {
+            "velocity_table": f'{project_id}.{etl_dataset}.w_velocity_calculated',
+            "trns_base_table": f'{project_id}.{target_dataset}.trns_base_values',
+        },
+        destination_dataset_table = f'{project_id}.{target_dataset}.trns_runtime_stats',
+        create_disposition = "CREATE_IF_NEEDED",
+        write_disposition = "WRITE_TRUNCATE",
+        use_legacy_sql=False 
+    )
+    calculate_runtime_stats.set_upstream([calculate_velocity, interpolate_values])
 
     end_task = DummyOperator(task_id='end')
-    end_task.set_upstream([calculate_runtime_stats, load_trns_table])
+    end_task.set_upstream([calculate_runtime_stats, summarize_totals])
 
     # Define the order in which the tasks complete
     # For now, I'm making them more explicit above, but can convert back to this format
