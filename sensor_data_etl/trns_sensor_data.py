@@ -165,9 +165,13 @@ schedule_interval=schedule_interval) as dag:
         use_legacy_sql=False 
     )
     # calculate_runtime_stats.set_upstream([calculate_velocity])
-
+    divider = DummyOperator(task_id='divider')
     end_task = DummyOperator(task_id='end')
     # end_task.set_upstream([calculate_runtime_stats, summarize_totals])
 
     # Define the order in which the tasks complete
-    chain(start_task, clean_format, convert_to_features, match_values_timestamps, interpolate_values, [calculate_velocity, calculate_force], [calculate_acceleration, calculate_runtime_stats], combine_totals, summarize_totals, end_task) 
+    chain(start_task, clean_format, convert_to_features, match_values_timestamps, interpolate_values, [calculate_velocity, calculate_force], divider, [calculate_acceleration, calculate_runtime_stats], combine_totals, summarize_totals, end_task) 
+   
+   
+    # start_task >> clean_format >> convert_to_features >> match_values_timestamps >> interpolate_values
+    # [calculate_velocity, calculate_force], [calculate_acceleration, calculate_runtime_stats], combine_totals, summarize_totals, end_task) 
