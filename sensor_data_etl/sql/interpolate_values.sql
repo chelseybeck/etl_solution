@@ -25,6 +25,7 @@ WITH main AS (
       time,
       run_uuid,
       fx_1,
+      -- find start and end values
       FIRST_VALUE(fx_1 IGNORE NULLS) OVER win1 AS fx_1_start_value,
       FIRST_VALUE(fx_1 IGNORE NULLS) OVER win2 AS fx_1_end_value,
       fy_1,
@@ -76,10 +77,11 @@ WITH main AS (
         time ROWS BETWEEN CURRENT ROW
         AND UNBOUNDED FOLLOWING)
     ORDER BY
-      time ) )
+      time ) ),
 -- above interpolation will not fill rows where first value is null
 -- fill remaining null values with first populated value
-SELECT
+fill_nulls AS (
+  SELECT
   time,
   IFNULL(fx_1, LAST_VALUE(fx_1 IGNORE NULLS) OVER win3) AS fx_1,
   IFNULL(fy_1, LAST_VALUE(fy_1 IGNORE NULLS) OVER win3) AS fy_1,
@@ -103,4 +105,39 @@ WINDOW
   ORDER BY
     time DESC )
 ORDER BY
-  time
+  time )
+
+-- changes order of columns and creates a 
+-- unique identifier for transformed rows
+SELECT  
+time,
+fx_1,
+fx_2,
+fy_1,
+fy_2,
+fz_1,
+fz_2,
+x_1,
+x_2,
+y_1,
+y_2,
+z_1,
+z_2,
+TO_HEX(SHA256(TO_JSON_STRING(STRUCT( time,
+          fx_1,
+          fx_2,
+          fy_1,
+          fy_2,
+          fz_1,
+          fz_2,
+          x_1,
+          x_2,
+          y_1,
+          y_2,
+          z_1,
+          z_2, 
+          run_uuid )))) AS trns_record_hash_code,
+  -- creates unique identifier
+CURRENT_TIMESTAMP AS etl_update_ts,
+run_uuid
+FROM fill_nulls
