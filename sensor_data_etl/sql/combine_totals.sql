@@ -33,7 +33,7 @@ WITH
     f.total_fx_2,
     f.total_fy_2,
     f.total_fz_2,
-    run_uuid
+    v.run_uuid
   FROM
     {{ params.acceleration_table }} a
   INNER JOIN
