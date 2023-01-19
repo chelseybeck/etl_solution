@@ -47,7 +47,7 @@ schedule_interval=schedule_interval) as dag:
         write_disposition = "WRITE_TRUNCATE",
         use_legacy_sql=False 
     )
-    clean_format.set_upstream(start_task)
+    # clean_format.set_upstream(start_task)
 
     # Convert timeseries to features by robot_id
     convert_to_features = BigQueryOperator(
@@ -59,7 +59,7 @@ schedule_interval=schedule_interval) as dag:
         write_disposition = "WRITE_TRUNCATE",
         use_legacy_sql=False 
     )
-    convert_to_features.set_upstream(clean_format)
+    # convert_to_features.set_upstream(clean_format)
 
     # Match timestamps with measurements 
     match_values_timestamps = BigQueryOperator(
@@ -72,7 +72,7 @@ schedule_interval=schedule_interval) as dag:
         use_legacy_sql=False 
     )
 
-    match_values_timestamps.set_upstream(convert_to_features)
+    # match_values_timestamps.set_upstream(convert_to_features)
 
     # Interpolate null values between rows
     interpolate_values = BigQueryOperator(
@@ -84,7 +84,7 @@ schedule_interval=schedule_interval) as dag:
         write_disposition = "WRITE_TRUNCATE",
         use_legacy_sql=False 
     )
-    interpolate_values.set_upstream(match_values_timestamps)
+    # interpolate_values.set_upstream(match_values_timestamps)
 
     # Calculate Velocity
     calculate_velocity = BigQueryOperator(
@@ -96,7 +96,7 @@ schedule_interval=schedule_interval) as dag:
         write_disposition = "WRITE_TRUNCATE",
         use_legacy_sql=False 
     )
-    calculate_velocity.set_upstream(interpolate_values)
+    # calculate_velocity.set_upstream(interpolate_values)
 
     # Calculate Acceleration
     calculate_acceleration = BigQueryOperator(
@@ -108,7 +108,7 @@ schedule_interval=schedule_interval) as dag:
         write_disposition = "WRITE_TRUNCATE",
         use_legacy_sql=False 
     )
-    calculate_velocity.set_upstream(calculate_velocity)
+    # calculate_velocity.set_upstream(calculate_velocity)
 
     # Calculate Force
     calculate_force = BigQueryOperator(
@@ -120,7 +120,7 @@ schedule_interval=schedule_interval) as dag:
         write_disposition = "WRITE_TRUNCATE",
         use_legacy_sql=False 
     )
-    calculate_force.set_upstream(interpolate_values)
+    # calculate_force.set_upstream(interpolate_values)
 
     # Combine Totals
     combine_totals = BigQueryOperator(
@@ -136,7 +136,7 @@ schedule_interval=schedule_interval) as dag:
         write_disposition = "WRITE_TRUNCATE",
         use_legacy_sql=False 
     )
-    combine_totals.set_upstream([calculate_velocity, calculate_acceleration, calculate_force])
+    # combine_totals.set_upstream([calculate_acceleration, calculate_force])
 
     # Summarize Totals
     summarize_totals = BigQueryOperator(
@@ -148,7 +148,7 @@ schedule_interval=schedule_interval) as dag:
         write_disposition = "WRITE_TRUNCATE",
         use_legacy_sql=False 
     )
-    summarize_totals.set_upstream(combine_totals)
+    # summarize_totals.set_upstream(combine_totals)
 
     # Calculate Runtime Statistics
     calculate_runtime_stats = BigQueryOperator(
@@ -163,11 +163,10 @@ schedule_interval=schedule_interval) as dag:
         write_disposition = "WRITE_TRUNCATE",
         use_legacy_sql=False 
     )
-    calculate_runtime_stats.set_upstream([calculate_velocity, interpolate_values])
+    # calculate_runtime_stats.set_upstream([calculate_velocity])
 
     end_task = DummyOperator(task_id='end')
-    end_task.set_upstream([calculate_runtime_stats, summarize_totals])
+    # end_task.set_upstream([calculate_runtime_stats, summarize_totals])
 
     # Define the order in which the tasks complete
-    # For now, I'm making them more explicit above, but can convert back to this format
-    # start_task >> clean_data >> convert_to_features >> match_timestamps >> [add_calculated_features, calculate_runtime_stats] >> end_task 
+    start_task >> clean_format >> convert_to_features >> match_values_timestamps >> interpolate_values >> [calculate_velocity, calculate_force] >> [calculate_acceleration, calculate_runtime_stats] >> combine_totals >> summarize_totals >> end_task 
