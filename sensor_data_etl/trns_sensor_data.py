@@ -170,4 +170,4 @@ schedule_interval=schedule_interval) as dag:
     # end_task.set_upstream([calculate_runtime_stats, summarize_totals])
 
     # Define the order in which the tasks complete
-    chain(start_task >> clean_format >> convert_to_features >> match_values_timestamps >> interpolate_values >> [calculate_velocity, calculate_force] >> [calculate_acceleration, calculate_runtime_stats] >> combine_totals >> summarize_totals >> end_task) 
+    chain(start_task, clean_format, convert_to_features, match_values_timestamps, interpolate_values, [calculate_velocity, calculate_force], [calculate_acceleration, calculate_runtime_stats], combine_totals, summarize_totals, end_task) 
