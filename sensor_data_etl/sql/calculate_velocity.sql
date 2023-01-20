@@ -64,7 +64,8 @@
     y_2_displacement,
     z_2_displacement,
     run_uuid,
-    trns_record_hash_code
+    trns_record_hash_code,
+    CURRENT_TIMESTAMP() AS etl_update_ts
   FROM
     changes
   ORDER BY
