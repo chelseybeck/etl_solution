@@ -141,3 +141,4 @@ TO_HEX(SHA256(TO_JSON_STRING(STRUCT( time,
 CURRENT_TIMESTAMP AS etl_update_ts,
 run_uuid
 FROM fill_nulls
+ORDER BY time 

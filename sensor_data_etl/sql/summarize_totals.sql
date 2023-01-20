@@ -1,114 +1,16 @@
 -- summarize calculations for summary table
-SELECT
-  run_uuid,
-  CASE
-    WHEN vx_1 IS NULL THEN 0
-  ELSE 
-  MAX(vx_1) 
-END 
-  AS vx_1,
-  CASE 
-    WHEN vy_1 IS NULL THEN 0
-  ELSE 
-  MAX(vy_1) 
-END 
-  AS vy_1,
-  CASE 
-    WHEN vz_1 IS NULL THEN 0
-  ELSE 
-  MAX(vz_1)
-END 
-  AS vz_1,
-  CASE 
-    WHEN vx_2 IS NULL THEN 0
-  ELSE  
-  MAX(vx_2) 
-END 
-  AS vx_2,
-  CASE 
-    WHEN vy_2 IS NULL THEN 0
-  ELSE 
-  MAX(vy_2) 
-END AS vy_2,
-  CASE 
-    WHEN vz_2 IS NULL THEN 0 
-  ELSE 
-  MAX(vz_2) 
-END 
-  AS vz_2,
-  CASE 
-    WHEN ax_1 IS NULL THEN 0
-  ELSE 
-  MAX(ax_1) 
-END 
-  AS ax_1,
-  CASE 
-    WHEN ay_1 IS NULL THEN 0 
-  ELSE 
-  MAX(ay_1) 
-END 
-  AS ay_1,
-  CASE 
-    WHEN az_1 IS NULL THEN 0 
-  ELSE 
-  MAX(az_1) 
-END 
-  AS az_1,
-  CASE 
-    WHEN ax_2 IS NULL THEN 0
-  ELSE 
-  MAX(ax_2) 
-END 
-  AS ax_2,
-  CASE 
-    WHEN ay_2 IS NULL THEN 0
-  ELSE 
-  MAX(ay_2) 
-END 
-  AS ay_2,
-  CASE 
-    WHEN az_2 IS NULL THEN 0 
-  ELSE 
-  MAX(az_2) 
-END 
-  AS az_2,
-  CASE 
-    WHEN v1 IS NULL THEN 0
-  ELSE 
-  MAX(v1) 
-END 
-  AS v1,
-  CASE 
-    WHEN v2 IS NULL THEN 0
-  ELSE 
-  MAX(v2) 
-END 
-  AS v2,
-  CASE 
-    WHEN a1 IS NULL THEN 0
-  ELSE 
-  MAX(a1) 
-END 
-  AS a1,
-  CASE 
-    WHEN a2 IS NULL THEN 0
-  ELSE 
-  MAX(a2) 
-END 
-  AS a2,
-  CASE 
-    WHEN f1 IS NULL THEN 0
-  ELSE 
-  MAX(f1) 
-END 
-  AS f1,
-CASE 
-  WHEN f2 IS NULL THEN 0
-  ELSE 
-  MAX(f2) 
-END 
-  AS f2
-FROM
-  {{ params.source_table }}
-GROUP BY
-  run_uuid
+SELECT  
+run_uuid,
+SUM(vx_1) AS total_vx_1,
+SUM(vy_1) AS total_vy_1,
+SUM(vz_1) AS total_vz_1,
+SUM(vx_2) AS total_vx_2,
+SUM(vy_2) AS total_vy_2,
+SUM(vz_2) AS total_vz_2,
+SUM(v1) AS total_v1,
+SUM(v2) AS total_v2,
+SUM(f1) AS total_f1,
+SUM(f2) AS total_f2,
+CURRENT_TIMESTAMP() AS etl_update_ts
+FROM {{ params.source_table }} 
+GROUP BY run_uuid 
