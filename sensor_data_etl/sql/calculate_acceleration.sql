@@ -20,7 +20,7 @@ WITH
     vz_2,
     LAG(vz_2) OVER win1 AS vz_2_prev_value
   FROM
-    `storied-storm-353916.w_sensor_data.w_velocity_calculated`
+    {{ params.source_table }}
   WINDOW
     win1 AS (
     PARTITION BY

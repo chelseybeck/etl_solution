@@ -73,7 +73,7 @@ SELECT
   -- runtime in seconds
   ROUND((ABS(TIMESTAMP_DIFF(MAX(time), MIN(time), MILLISECOND)) / 1000), 5) AS run_time,
   -- distance in meters
-  MAX(x_1_sum) + MAX(y_1_sum) + MAX(z_1_sum) + MAX(x_2_sum) + MAX(y_2_sum) AS total_distance_travelled,
+  (MAX(x_1_sum) + MAX(y_1_sum) + MAX(z_1_sum) + MAX(x_2_sum) + MAX(y_2_sum)) / 1000 AS total_distance_travelled,
   CURRENT_TIMESTAMP() AS etl_update_ts
 FROM
   distance
