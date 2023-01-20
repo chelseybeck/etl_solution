@@ -99,5 +99,6 @@ END
   NULL
 END
   AS z_2,
+CURRENT_TIMESTAMP() AS etl_update_ts
 FROM {{ params.source_table }}
 ORDER BY time 
