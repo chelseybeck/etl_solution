@@ -64,9 +64,9 @@ Code deployments are separated into two main environment branches, dev and main.
    - total runtime
    - total distance draveled
 7. Perform data quality (DQ) checks - TO DO
-8. Load final table into transformed layer of data lake for downstream consumption - DONE
+8. Load final table into transformed layer of data lake for downstream consumption
 
-![Airflow DAG](./img/airflow_dag.png)
+![Airflow DAG](./img/airflow_dag_v2.png)
 
 # Cloud Infrastructure
 The cloud resources used for this solution were deployed through terraform as shown in the [terraform](./terraform) directory. List of cloud resources created and used for this project:
