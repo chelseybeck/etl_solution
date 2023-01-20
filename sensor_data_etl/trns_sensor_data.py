@@ -144,7 +144,7 @@ schedule_interval=schedule_interval) as dag:
         use_legacy_sql=False 
     )
 
-    divider = DummyOperator(task_id='divider')
+    # divider = DummyOperator(task_id='divider')
     end_task = DummyOperator(task_id='end')
 
     # Define the order in which the tasks complete
