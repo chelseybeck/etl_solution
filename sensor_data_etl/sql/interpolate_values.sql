@@ -103,7 +103,7 @@ WINDOW
   PARTITION BY
     run_uuid 
   ORDER BY
-    time DESC )
+    time )
 ORDER BY
   time )
 
