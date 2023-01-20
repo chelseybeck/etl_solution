@@ -10,6 +10,7 @@ SUM(vz_2) AS total_vz_2,
 SUM(v1) AS total_v1,
 SUM(v2) AS total_v2,
 SUM(f1) AS total_f1,
-SUM(f2) AS total_f2
+SUM(f2) AS total_f2,
+CURRENT_TIMESTAMP() AS etl_update_ts
 FROM {{ params.source_table }} 
 GROUP BY run_uuid 
