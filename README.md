@@ -5,7 +5,6 @@ This is an example pipeline built as a custom solution to an [assignment provide
 # Tech Stack
 - [Google Cloud Platform (GCP)](https://cloud.google.com/gcp)
 - [Google Cloud Storage (GCS)](https://cloud.google.com/storage/docs)
-- [Cloud Functions](https://cloud.google.com/functions/docs)
 - [Apache Airflow](https://airflow.apache.org/docs/apache-airflow/stable/) - workflow as code - written in Python
   - Running on a GCP hosted Composer cluster
 - [BigQuery](https://cloud.google.com/bigquery/docs) - Data lake
@@ -63,7 +62,6 @@ Code deployments are separated into two main environment branches, dev and main.
    - run stop time
    - total runtime
    - total distance draveled
-7. Perform data quality (DQ) checks - TO DO
 8. Load final table into transformed layer of data lake for downstream consumption
 
 ![Airflow DAG](./img/airflow_dag_v2.png)
@@ -82,7 +80,6 @@ The cloud resources used for this solution were deployed through terraform as sh
   - 1 service account - key in GitHub secrets
 
 # Contributing
-To contribute, clone this repo and create a feature branch from main. Push changes to dev and open a PR from dev to main.
 ## Adding tasks to the DAG
 Add a task to the [trns_sensor_data.py](sensor_data_etl/trns_sensor_data.py) workflow. Example task:
 
@@ -103,9 +100,16 @@ Airflow is flexible and extendible - check out their [library of operators](http
 ## Updating Transformation Logic
 To update the transformation logic (add features, etc.), update the SQL file corresponding to the task.
 ## Access
-As soon as this solution is complete and fully tested, I can provide access to anyone at Machina Labs who wishes to upload a file, trigger the process, and retrieve the results.  
+The transformed files can be found in the [sensor_data_files](./sensor_data_files/in) directory.
 
-I'm also happy to grant viewer access to BigQuery and Composer to view the tables and workflows (provide gmail address).
+- [trns_calculated_features.csv.gz](./sensor_data_files/in/trns_calculated_features.csv.gz) - fully transformed data based on assignment specifications
+  - gzipped to save space
+- [trns_calculated_summary.csv](./sensor_data_files/in/trns_calculated_summary.csv) - a summary of calculated features by run_uuid
+- [trns_runtime_stats.csv](./sensor_data_files/in/trns_runtime_stats.csv) - contains runtime statistics by run_uuid
+- [trns_base_values.csv.gz](./sensor_data_files/in/trns_base_values.csv.gz) - contains base values - before interpolation 
+  - gzipped to save space
+
+I'm happy to grant viewer access to BigQuery and Composer to view the tables and workflows (provide gmail address).
 
 # Future Improvements
 - Automate pipeline so that when a file is uploaded to the repo inside of the OUT directory, it syncs to a GCS bucket 
