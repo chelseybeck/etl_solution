@@ -1,6 +1,6 @@
 # Overview | Sensor Data ETL Pipeline
 
-This is an example pipeline built as a custom solution to an [assignment provided by Machina Labs](https://github.com/Machina-Labs/data_engineer_hw). It extracts robot sensor data from a Google Cloud Storage (GCS) bucket, transforms the data based on a set of specifications, and loads it into a BigQuery data lake for downstream consumption.
+This is an example pipeline built as a custom solution to an [assignment provided by Machina Labs](https://github.com/Machina-Labs/data_engineer_hw). It extracts robot sensor data from a Google Cloud Storage (GCS) bucket, transforms the data based on a set of specifications, and loads it into a BigQuery data warehouse for downstream consumption.
 
 # Tech Stack
 - [Google Cloud Platform (GCP)](https://cloud.google.com/gcp)
@@ -62,7 +62,7 @@ Code deployments are separated into two main environment branches, dev and main.
    - run stop time
    - total runtime
    - total distance draveled
-8. Load final table into transformed layer of data lake for downstream consumption
+8. Load final table into transformed layer of data warehouse for downstream consumption
 
 ![Airflow DAG](./img/airflow_dag_v2.png)
 
