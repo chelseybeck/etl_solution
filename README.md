@@ -7,7 +7,7 @@ This is an example pipeline built as a custom solution to an [assignment provide
 - [Google Cloud Storage (GCS)](https://cloud.google.com/storage/docs)
 - [Apache Airflow](https://airflow.apache.org/docs/apache-airflow/stable/) - workflow as code - written in Python
   - Running on a GCP hosted Composer cluster
-- [BigQuery](https://cloud.google.com/bigquery/docs) - Data lake
+- [BigQuery](https://cloud.google.com/bigquery/docs) - Data warehouse
   - Transformation logic written in standard SQL
 
 ### Why these tools?  

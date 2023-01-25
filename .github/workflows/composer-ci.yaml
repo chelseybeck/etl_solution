@@ -30,4 +30,4 @@ jobs:
       uses: 'google-github-actions/setup-gcloud@v1'
 
     - name: 'Use gcloud CLI'
-      run: 'gsutil rsync -r -d sensor_data_etl gs://us-central1-sensor-data-pro-af7d6e53-bucket/dags/sensor_data_etl'
+      run: 'gsutil rsync -r -d sensor_data_etl gs://us-central1-etl-solution-5a15d502-bucket/dags/sensor_data_etl'
