@@ -109,7 +109,5 @@ The transformed files can be found in the [sensor_data_files](./sensor_data_file
 - [trns_base_values.csv.gz](./sensor_data_files/in/trns_base_values.csv.gz) - contains base values - before interpolation 
   - gzipped to save space
 
-I'm happy to grant viewer access to BigQuery and Composer to view the tables and workflows (provide gmail address).
-
 # Future Improvements
-- Automate pipeline so that when a file is uploaded to the repo inside of the OUT directory, it syncs to a GCS bucket 
+- Automate pipeline so that when a file is uploaded to the repo inside of the OUT directory, it syncs to a GCS bucket, runs the transformation, and returns a transformed file to the IN directory.
