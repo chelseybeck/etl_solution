@@ -6,6 +6,13 @@ resource "google_storage_bucket" "etl_extraction_bucket" {
   uniform_bucket_level_access = true
 }
 
+resource "google_storage_bucket" "etl_ingestion_bucket" {
+  name                        = "sensor_data_syncs"
+  project                     = var.project_id
+  location                    = "US"
+  uniform_bucket_level_access = true
+}
+
 // Create dataset for ingestion to raw layer
 resource "google_bigquery_dataset" "raw_dataset" {
   dataset_id  = "raw_sensor_data_prod"
