@@ -18,3 +18,10 @@ jobs:
           output-file: README.md
           output-method: inject
           git-push: "true"
+      - name: Generate Terraform docs in modules
+        uses: terraform-docs/gh-actions@v1.1.0
+        with:
+          working-dir: terraform/modules
+          output-file: README.md
+          output-method: inject
+          git-push: "true"
